@@ -216,7 +216,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
             <div className={styles.priceInputWrapper}>
               <span className={styles.currencySymbol}>R$</span>
               <input 
-                type="text" 
+                type="tel" 
                 inputMode="numeric"
                 pattern="[0-9]*"
                 placeholder="0,00" 
@@ -240,7 +240,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
                   −
                 </button>
                 <input 
-                  type="text" 
+                  type="tel" 
                   inputMode="decimal"
                   className={styles.qtyInput} 
                   value={quantityStr}
