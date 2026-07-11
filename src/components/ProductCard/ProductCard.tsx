@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styles from './ProductCard.module.css';
 import { type Product, useCart } from '../../contexts/CartContext';
 import { formatCurrency } from '../../utils/format';
@@ -10,6 +11,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onEdit, onRemove }: ProductCardProps) {
   const { updateQuantity } = useCart();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleDecrease = () => {
     if (product.quantity > 1) {
@@ -32,9 +34,13 @@ export function ProductCard({ product, onEdit, onRemove }: ProductCardProps) {
   const totalPrice = Number(Math.round(Number(itemTotal + 'e2')) + 'e-2');
 
   return (
-    <div className={styles.card}>
-      <div className={styles.imageContainer}>
-        {product.imageUrl ? (
+    <>
+      <div className={styles.card}>
+        <div 
+          className={`${styles.imageContainer} ${product.imageUrl ? styles.clickable : ''}`}
+          onClick={() => product.imageUrl && setIsExpanded(true)}
+        >
+          {product.imageUrl ? (
           <img src={product.imageUrl} alt={product.name} className={styles.image} />
         ) : (
           <div className={styles.imagePlaceholder}>
@@ -84,7 +90,18 @@ export function ProductCard({ product, onEdit, onRemove }: ProductCardProps) {
             </button>
           </div>
         </div>
+          </div>
+        </div>
       </div>
-    </div>
+
+      {isExpanded && product.imageUrl && (
+        <div className={styles.imageOverlay} onClick={() => setIsExpanded(false)}>
+          <div className={styles.expandedImageWrapper}>
+            <img src={product.imageUrl} alt={product.name} className={styles.expandedImage} />
+            <button className={styles.closeExpandedBtn}>×</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
