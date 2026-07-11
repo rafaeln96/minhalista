@@ -1,0 +1,50 @@
+:root {
+  /* Colors */
+  --color-primary: #1C4230; /* Dark Green matched to the mockup */
+  --color-primary-light: #255840; /* Hover state for primary */
+  --color-background: #F2F5F4; /* Off-white background */
+  --color-surface: #FFFFFF; /* White for cards/modals */
+  --color-surface-hover: #E3EBE6; /* Light green hover/background for inputs */
+  --color-text: #212529; /* Dark Gray for main text */
+  --color-text-light: #6C757D; /* Light gray for secondary text */
+  --color-text-white: #FFFFFF;
+  --color-border: #E9ECEF;
+  --color-danger: #D90429;
+  
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-modal: 0 -4px 24px rgba(0, 0, 0, 0.15);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+input {
+  font-family: inherit;
+}

@@ -1,0 +1,328 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.sheet {
+  background-color: var(--color-surface);
+  width: 100%;
+  max-width: 600px;
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+  padding: 16px 24px 32px;
+  box-shadow: var(--shadow-modal);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dragHandle {
+  width: 40px;
+  height: 4px;
+  background-color: var(--color-border);
+  border-radius: 2px;
+  margin: 0 auto 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--color-text);
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+.closeBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-surface-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--color-text-light);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.closeBtn:hover {
+  background-color: #E2E8F0;
+  color: var(--color-text);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.nameSection {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.imageUpload {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-md);
+  border: 2px dashed var(--color-border);
+  background-color: var(--color-surface-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: border-color 0.2s;
+}
+
+.imageUpload:hover {
+  border-color: var(--color-primary-light);
+}
+
+.imagePlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-light);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.imagePreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.removeImageBtn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  backdrop-filter: blur(2px);
+}
+
+.removeImageBtn:hover {
+  background-color: rgba(217, 4, 41, 0.8);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.inputGroup label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-light);
+  letter-spacing: 0.05em;
+}
+
+.inputGroup input {
+  background-color: var(--color-surface-hover);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 1rem;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.inputGroup input:focus {
+  border-color: var(--color-primary);
+}
+
+.priceInputWrapper {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-surface-hover);
+  border-radius: var(--radius-md);
+  padding: 0 16px;
+}
+
+.priceInputWrapper:focus-within {
+  border: 1px solid var(--color-primary);
+}
+
+.currencySymbol {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-right: 8px;
+}
+
+.priceInput {
+  flex: 1;
+  background: transparent !important;
+  border: none !important;
+  padding: 16px 0 !important;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+}
+
+.row .inputGroup {
+  flex: 1;
+}
+
+.quantityControlWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-surface-hover);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  height: 60px;
+}
+
+.qtyBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qtyBtn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.qtyInput {
+  width: 70px;
+  height: 44px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-text);
+  outline: none;
+  margin: 0 4px;
+  transition: border-color 0.2s;
+}
+
+.qtyInput:focus {
+  border-color: var(--color-primary);
+}
+
+.qtyInput::-webkit-outer-spin-button,
+.qtyInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.unitSelect {
+  background-color: var(--color-surface-hover);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 0 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  height: 60px;
+  width: 100%;
+}
+
+.unitSelect:focus {
+  border-color: var(--color-primary);
+}
+
+.submitBtn {
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+  padding: 18px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 8px;
+  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.2);
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background-color: var(--color-primary-light);
+  transform: translateY(-2px);
+}
+
+.submitBtn:disabled {
+  background-color: var(--color-border);
+  color: var(--color-text-light);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.footerHint {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

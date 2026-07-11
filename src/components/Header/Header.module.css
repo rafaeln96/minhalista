@@ -1,0 +1,118 @@
+.header {
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+  padding: 32px 24px 64px;
+  border-radius: 0 0 50% 50% / 0 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoText {
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.exportBtn {
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 6px 14px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.exportBtn:hover:not(:disabled) {
+  color: var(--color-text-white);
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.exportBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clearBtn {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.clearBtn:hover {
+  color: var(--color-text-white);
+}
+
+.totalSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.totalLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.totalValueContainer {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.currencySymbol {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.totalValue {
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1;
+  font-family: 'Consolas', 'Courier New', monospace;
+  letter-spacing: -0.02em;
+}
+
+.itemCount {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}

@@ -1,0 +1,225 @@
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: var(--color-background);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.05);
+}
+
+.product-list {
+  flex: 1;
+  padding: 16px 24px 100px; /* Padding extra embaixo para o FAB */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.sticky-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--color-background);
+  padding-bottom: 8px;
+  /* Corrige o gap de 1px (linha fina) que aparece em alguns browsers mobile durante o scroll */
+  box-shadow: 0 1px 0 var(--color-background);
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 0 16px;
+  margin: 0 24px 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 51;
+}
+
+.search-icon {
+  color: var(--color-text-light);
+  margin-right: 12px;
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 16px 0;
+  font-size: 1rem;
+  color: var(--color-text);
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: var(--color-text-light);
+}
+
+.empty-search-state {
+  text-align: center;
+  padding: 32px 0;
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+}
+
+/* Modal de Confirmação */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+  padding: 24px;
+}
+
+.confirm-modal {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+}
+
+.confirm-modal h3 {
+  margin: 0 0 8px 0;
+  color: var(--color-text);
+  font-size: 1.25rem;
+}
+
+.confirm-modal p {
+  color: var(--color-text-light);
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-cancel {
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-hover);
+  color: var(--color-text);
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #E2E8F0;
+}
+
+.btn-delete {
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  background-color: #D90429;
+  color: white;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.btn-delete:hover {
+  background-color: #b50322;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+  margin-top: 24px;
+}
+
+.empty-icon-wrapper {
+  margin-bottom: 24px;
+}
+
+.empty-icon-bg {
+  width: 80px;
+  height: 80px;
+  background-color: var(--color-surface-hover);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: var(--color-primary-light);
+  animation: float-cart 3s ease-in-out infinite;
+}
+
+.empty-icon-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: #38b000;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 2px solid var(--color-background);
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+  0% { transform: scale(1); }
+  10% { transform: scale(1.15); }
+  20% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+.empty-state h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 8px 0;
+}
+
+@keyframes float-cart {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+.empty-state p {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  margin: 0 0 24px 0;
+  line-height: 1.4;
+}
+
+.empty-action-btn {
+  background-color: var(--color-surface-hover);
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 12px 20px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.empty-action-btn:hover {
+  background-color: #d1ddd5;
+  transform: translateY(-2px);
+}
