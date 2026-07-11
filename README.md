@@ -18,7 +18,7 @@ Um aplicativo Web progressivo e moderno para gerenciamento de listas de compras 
 - **Frontend Framework**: React 19 + TypeScript (para tipagem estática rigorosa).
 - **Build Tool**: Vite (Extremamente rápido com Hot Module Replacement).
 - **Gerenciamento de Estado**: Context API Nativa (`CartContext.tsx`), centralizando a lógica de soma e formatação de unidades.
-- **Estilização**: CSS Modules Puros. Variáveis CSS (`App.css`) para gerenciar as cores primárias (Verde Floresta `1C4230`) e dark-modes dinâmicos no futuro. Micro-interações via keyframes (`float`, `pulse`).
+- **Estilização**: CSS Modules Puros. Variáveis CSS (`App.css`) para gerenciar as cores primárias (Verde Floresta `1C4230`). O layout apresenta um design premium, incluindo fundos estilizados com grade sutil, mesh gradients, e micro-interações via keyframes (`float`, `pulse`), garantindo uma estética moderna e confortável.
 - **Geração de PDF**: `jspdf` e `jspdf-autotable`. Desenhado nativamente usando os métodos de canvas interno do PDF (retângulos com cantos arredondados, tabelas estilizadas).
 
 ## 🗂️ Estrutura de Pastas
