@@ -90,18 +90,17 @@ export function ProductCard({ product, onEdit, onRemove }: ProductCardProps) {
             </button>
           </div>
         </div>
-          </div>
+      </div>
+    </div>
+
+    {isExpanded && product.imageUrl && (
+      <div className={styles.imageOverlay} onClick={() => setIsExpanded(false)}>
+        <div className={styles.expandedImageWrapper}>
+          <img src={product.imageUrl} alt={product.name} className={styles.expandedImage} />
+          <button className={styles.closeExpandedBtn}>×</button>
         </div>
       </div>
-
-      {isExpanded && product.imageUrl && (
-        <div className={styles.imageOverlay} onClick={() => setIsExpanded(false)}>
-          <div className={styles.expandedImageWrapper}>
-            <img src={product.imageUrl} alt={product.name} className={styles.expandedImage} />
-            <button className={styles.closeExpandedBtn}>×</button>
-          </div>
-        </div>
-      )}
+    )}
     </>
   );
 }
