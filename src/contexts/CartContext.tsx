@@ -33,7 +33,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    localStorage.setItem('@MinhaLista:products', JSON.stringify(products));
+    try {
+      localStorage.setItem('@MinhaLista:products', JSON.stringify(products));
+    } catch (e) {
+      console.error('Erro ao salvar no localStorage (possível limite excedido)', e);
+    }
   }, [products]);
 
   const addProduct = (product: Omit<Product, 'id'>) => {

@@ -59,7 +59,34 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImageUrl(reader.result as string);
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_SIZE = 300;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Comprime a imagem para JPEG com 70% de qualidade para economizar no localStorage
+          setImageUrl(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.src = reader.result as string;
       };
       reader.readAsDataURL(file);
     }
@@ -190,6 +217,8 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
               <span className={styles.currencySymbol}>R$</span>
               <input 
                 type="text" 
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="0,00" 
                 value={priceStr}
                 onChange={handlePriceChange}
@@ -212,6 +241,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
                 </button>
                 <input 
                   type="text" 
+                  inputMode="decimal"
                   className={styles.qtyInput} 
                   value={quantityStr}
                   onChange={handleQuantityChange}
