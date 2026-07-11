@@ -218,7 +218,6 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
               <input 
                 type="tel" 
                 inputMode="numeric"
-                pattern="[0-9]*"
                 placeholder="0,00" 
                 value={priceStr}
                 onChange={handlePriceChange}
