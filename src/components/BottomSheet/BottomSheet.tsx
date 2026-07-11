@@ -160,7 +160,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
           <button className={styles.closeBtn} onClick={onClose}>×</button>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit} className={styles.form} noValidate>
           <div className={styles.nameSection}>
             <div 
               className={styles.imageUpload} 
@@ -216,8 +216,9 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
             <div className={styles.priceInputWrapper}>
               <span className={styles.currencySymbol}>R$</span>
               <input 
-                type="tel" 
+                type="text" 
                 inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="0,00" 
                 value={priceStr}
                 onChange={handlePriceChange}
@@ -239,7 +240,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
                   −
                 </button>
                 <input 
-                  type="tel" 
+                  type="text" 
                   inputMode="decimal"
                   className={styles.qtyInput} 
                   value={quantityStr}
