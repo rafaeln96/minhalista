@@ -11,12 +11,14 @@ Um aplicativo Web progressivo e moderno para gerenciamento de listas de compras 
 - **Prevenção de Falhas de Flutuação (Float-point)**: Toda a matemática é executada com tratamentos precisos de arredondamento (`Number(Math.round(val + 'e2')) + 'e-2'`), eliminando problemas clássicos de soma com centavos no JavaScript.
 - **Exportação Nativa para PDF**: Geração local e instantânea de relatórios no formato PDF utilizando renderização nativa da biblioteca `jsPDF`, simulando o design de uma "nota fiscal" premium, sem necessidade de internet ou backend.
 - **Busca em Tempo Real**: Barra superior fixada com pesquisa instantânea no carrinho (mesmo para itens adicionados apenas por imagem).
+- **PWA Completo**: Instalação direta no Android e iOS (adicione à tela de início) com cache offline via Service Workers e um ícone personalizado (512x512).
 - **Sem Dependência de Backend**: Toda a persistência pode ser feita no cliente ou exportada diretamente. Tudo roda localmente no navegador!
 
 ## 🛠️ Tecnologias e Arquitetura
 
 - **Frontend Framework**: React 19 + TypeScript (para tipagem estática rigorosa).
 - **Build Tool**: Vite (Extremamente rápido com Hot Module Replacement).
+- **PWA**: `vite-plugin-pwa` para autogeração de manifestos e Service Workers offline.
 - **Gerenciamento de Estado**: Context API Nativa (`CartContext.tsx`), centralizando a lógica de soma e formatação de unidades.
 - **Estilização**: CSS Modules Puros. Variáveis CSS (`App.css`) para gerenciar as cores primárias (Verde Floresta `1C4230`). O layout apresenta um design premium, incluindo fundos estilizados com grade sutil, mesh gradients, e micro-interações via keyframes (`float`, `pulse`), garantindo uma estética moderna e confortável.
 - **Geração de PDF**: `jspdf` e `jspdf-autotable`. Desenhado nativamente usando os métodos de canvas interno do PDF (retângulos com cantos arredondados, tabelas estilizadas).
@@ -64,4 +66,3 @@ Os arquivos otimizados serão gerados dentro da pasta `dist/`, prontos para sere
 ## 📄 Notas Futuras / Roadmap
 
 - Conectar a um backend (Supabase ou Firebase) para login se necessário.
-- Transformar 100% em PWA (adicionar `manifest.json` e Service Workers) para instalação direta como aplicativo no Android/iOS.
