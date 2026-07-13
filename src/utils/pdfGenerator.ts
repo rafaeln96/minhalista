@@ -3,7 +3,41 @@ import autoTable from 'jspdf-autotable';
 import { formatCurrency } from './format';
 import type { Product } from '../contexts/CartContext';
 
-export const generateShoppingListPDF = (
+const loadTransparentImage = (url: string): Promise<string | HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return resolve(img);
+      
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      
+      // Converte pixels brancos (ou muito claros) para transparentes
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        
+        if (r > 240 && g > 240 && b > 240) {
+          data[i + 3] = 0; // Alpha = 0 (transparente)
+        }
+      }
+      
+      ctx.putImageData(imageData, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+};
+
+export const generateShoppingListPDF = async (
   products: Product[],
   totalUnits: number,
   totalPrice: number
@@ -26,15 +60,23 @@ export const generateShoppingListPDF = (
   doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.rect(0, 0, pageWidth, 80, 'F');
 
-  // Logo (um quadrado simples simulando a folha)
-  doc.setFillColor(255, 255, 255);
-  doc.setGState(new (doc as any).GState({opacity: 0.15}));
-  doc.roundedRect(15, 15, 12, 12, 3, 3, 'F');
-  doc.setGState(new (doc as any).GState({opacity: 1}));
-  
-  doc.setTextColor(primaryLightColor[0], primaryLightColor[1], primaryLightColor[2]);
-  doc.setFontSize(10);
-  doc.text('M', 18, 23); // Placeholder de ícone logo
+  // Logo (imagem carregada com fundo transparente)
+  try {
+    const logoUrl = import.meta.env.BASE_URL + 'icon-512x512.png';
+    const transparentLogo = await loadTransparentImage(logoUrl);
+    doc.addImage(transparentLogo, 'PNG', 15, 15, 12, 12);
+  } catch (error) {
+    console.warn('Erro ao carregar o logo, usando fallback:', error);
+    // Fallback
+    doc.setFillColor(255, 255, 255);
+    doc.setGState(new (doc as any).GState({opacity: 0.15}));
+    doc.roundedRect(15, 15, 12, 12, 3, 3, 'F');
+    doc.setGState(new (doc as any).GState({opacity: 1}));
+    
+    doc.setTextColor(primaryLightColor[0], primaryLightColor[1], primaryLightColor[2]);
+    doc.setFontSize(10);
+    doc.text('M', 18, 23); // Placeholder de ícone logo
+  }
 
   // Títulos
   doc.setTextColor(255, 255, 255);
@@ -72,30 +114,31 @@ export const generateShoppingListPDF = (
   doc.text(formatCurrency(totalPrice), 20, 58);
 
   // Métrica 1
-  const m1X = pageWidth - 90;
-  doc.setFontSize(12);
-  doc.text(products.length.toString(), m1X, 52, { align: 'center' });
+  const m1X = pageWidth - 102;
   doc.setTextColor(150, 180, 160);
   doc.setFontSize(7);
-  doc.text('PRODUTOS', m1X, 58, { align: 'center' });
+  doc.text('PRODUTOS', m1X, 48, { align: 'center' });
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(12);
+  doc.text(products.length.toString(), m1X, 58, { align: 'center' });
 
   // Métrica 2
-  const m2X = pageWidth - 60;
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(12);
-  doc.text(Number(totalUnits.toFixed(3)).toString().replace('.', ','), m2X, 52, { align: 'center' });
+  const m2X = pageWidth - 67;
   doc.setTextColor(150, 180, 160);
   doc.setFontSize(7);
-  doc.text('UNIDADES', m2X, 58, { align: 'center' });
+  doc.text('UNIDADES', m2X, 48, { align: 'center' });
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(12);
+  doc.text(Number(totalUnits.toFixed(3)).toString().replace('.', ','), m2X, 58, { align: 'center' });
 
   // Métrica 3
-  const m3X = pageWidth - 25;
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(12);
-  doc.text(formatCurrency(averageTicket), m3X, 52, { align: 'center' });
+  const m3X = pageWidth - 32;
   doc.setTextColor(150, 180, 160);
   doc.setFontSize(7);
-  doc.text('MÉDIA', m3X, 58, { align: 'center' });
+  doc.text('MÉDIA', m3X, 48, { align: 'center' });
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(12);
+  doc.text(formatCurrency(averageTicket), m3X, 58, { align: 'center' });
 
 
   // --- BODY TÍTULO ---
