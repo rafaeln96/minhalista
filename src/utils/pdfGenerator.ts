@@ -1,5 +1,6 @@
 import { formatCurrency } from './format';
 import type { Product } from '../contexts/CartContext';
+import { translations, type Language } from '../i18n/translations';
 
 const loadTransparentImage = (url: string): Promise<string | HTMLImageElement> => {
   return new Promise((resolve, reject) => {
@@ -38,12 +39,15 @@ const loadTransparentImage = (url: string): Promise<string | HTMLImageElement> =
 export const generateShoppingListPDF = async (
   products: Product[],
   totalUnits: number,
-  totalPrice: number
+  totalPrice: number,
+  lang: Language = 'pt'
 ) => {
   const [{ jsPDF }, { default: autoTable }] = await Promise.all([
     import('jspdf'),
     import('jspdf-autotable')
   ]);
+  
+  const dict = translations[lang] || translations.pt;
   const doc = new jsPDF('p', 'mm', 'a4');
   const pageWidth = doc.internal.pageSize.getWidth();
   
@@ -52,9 +56,10 @@ export const generateShoppingListPDF = async (
   const primaryLightColor: [number, number, number] = [167, 201, 87]; // Verde folha
   const lightBgColor: [number, number, number] = [248, 249, 250]; // Fundo da tabela
 
+  const locale = lang === 'pt' ? 'pt-BR' : 'en-US';
   const dateObj = new Date();
-  const dateStr = dateObj.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
-  const timeStr = dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const dateStr = dateObj.toLocaleDateString(locale, { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  const timeStr = dateObj.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
   const formattedDate = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
   const averageTicket = products.length > 0 ? totalPrice / products.length : 0;
 
@@ -69,7 +74,6 @@ export const generateShoppingListPDF = async (
     doc.addImage(transparentLogo, 'PNG', 15, 15, 12, 12);
   } catch (error) {
     console.warn('Erro ao carregar o logo, usando fallback:', error);
-    // Fallback
     doc.setFillColor(255, 255, 255);
     doc.setGState(new (doc as any).GState({opacity: 0.15}));
     doc.roundedRect(15, 15, 12, 12, 3, 3, 'F');
@@ -77,23 +81,23 @@ export const generateShoppingListPDF = async (
     
     doc.setTextColor(primaryLightColor[0], primaryLightColor[1], primaryLightColor[2]);
     doc.setFontSize(10);
-    doc.text('M', 18, 23); // Placeholder de ícone logo
+    doc.text('M', 18, 23);
   }
 
   // Títulos
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(16);
-  doc.text('Mercado', 32, 21);
+  doc.text(dict['pdf.title'], 32, 21);
   
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
   doc.setTextColor(150, 180, 160);
-  doc.text('LISTA DE COMPRAS', 32, 26);
+  doc.text(dict['pdf.subtitle'], 32, 26);
 
   // Info Data (Direita)
   doc.setFontSize(7);
-  doc.text('EMITIDO EM', pageWidth - 15, 19, { align: 'right' });
+  doc.text(dict['pdf.issuedAt'], pageWidth - 15, 19, { align: 'right' });
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(10);
   doc.text(formattedDate, pageWidth - 15, 24, { align: 'right' });
@@ -110,16 +114,16 @@ export const generateShoppingListPDF = async (
   // Gasto
   doc.setTextColor(150, 180, 160);
   doc.setFontSize(8);
-  doc.text('TOTAL GASTO', 20, 48);
+  doc.text(dict['pdf.totalSpent'], 20, 48);
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(18);
-  doc.text(formatCurrency(totalPrice), 20, 58);
+  doc.text(formatCurrency(totalPrice, lang), 20, 58);
 
   // Métrica 1
   const m1X = pageWidth - 102;
   doc.setTextColor(150, 180, 160);
   doc.setFontSize(7);
-  doc.text('PRODUTOS', m1X, 48, { align: 'center' });
+  doc.text(dict['pdf.products'], m1X, 48, { align: 'center' });
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(12);
   doc.text(products.length.toString(), m1X, 58, { align: 'center' });
@@ -128,43 +132,46 @@ export const generateShoppingListPDF = async (
   const m2X = pageWidth - 67;
   doc.setTextColor(150, 180, 160);
   doc.setFontSize(7);
-  doc.text('UNIDADES', m2X, 48, { align: 'center' });
+  doc.text(dict['pdf.units'], m2X, 48, { align: 'center' });
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(12);
-  doc.text(Number(totalUnits.toFixed(3)).toString().replace('.', ','), m2X, 58, { align: 'center' });
+  const formattedTotalUnits = lang === 'pt'
+    ? Number(totalUnits.toFixed(3)).toString().replace('.', ',')
+    : Number(totalUnits.toFixed(3)).toString();
+  doc.text(formattedTotalUnits, m2X, 58, { align: 'center' });
 
   // Métrica 3
   const m3X = pageWidth - 32;
   doc.setTextColor(150, 180, 160);
   doc.setFontSize(7);
-  doc.text('MÉDIA', m3X, 48, { align: 'center' });
+  doc.text(dict['pdf.average'], m3X, 48, { align: 'center' });
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(12);
-  doc.text(formatCurrency(averageTicket), m3X, 58, { align: 'center' });
-
+  doc.text(formatCurrency(averageTicket, lang), m3X, 58, { align: 'center' });
 
   // --- BODY TÍTULO ---
   doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.setFontSize(10);
-  doc.text('ITENS DA LISTA', 18, 95);
+  doc.text(dict['pdf.listItems'], 18, 95);
   // Linha lateral
   doc.setLineWidth(1);
   doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.line(15, 91, 15, 96);
 
-
   // --- TABELA ---
   const tableData = products.map(product => {
     const isUnitMultiplier = product.unit === 'un';
-    const quantityStr = `${product.quantity.toString().replace('.', ',')}`;
-    const priceStr = formatCurrency(product.price);
+    const quantityStr = lang === 'pt'
+      ? product.quantity.toString().replace('.', ',')
+      : product.quantity.toString();
+    const priceStr = formatCurrency(product.price, lang);
     const itemTotalRaw = isUnitMultiplier ? product.quantity * product.price : product.price;
     const roundedItemTotal = Number(Math.round(Number(itemTotalRaw + 'e2')) + 'e-2');
-    const totalStr = formatCurrency(roundedItemTotal);
+    const totalStr = formatCurrency(roundedItemTotal, lang);
+    const fallbackName = product.imageUrl ? dict['product.photoOnly'] : dict['pdf.noName'];
 
-    // O primeiro campo fica com espaçamento pra podermos desenhar algo no gancho
     return [
-      `     ${product.name || 'Sem nome'}`, // espaços para fingir indentação da imagem
+      `     ${product.name || fallbackName}`,
       quantityStr,
       priceStr,
       totalStr
@@ -173,9 +180,9 @@ export const generateShoppingListPDF = async (
 
   autoTable(doc, {
     startY: 105,
-    head: [['PRODUTO', 'QTD.', 'PREÇO UN.', 'SUBTOTAL']],
+    head: [[dict['pdf.thProduct'], dict['pdf.thQty'], dict['pdf.thUnitPrice'], dict['pdf.thSubtotal']]],
     body: tableData,
-    theme: 'plain', // Sem bordas
+    theme: 'plain',
     headStyles: {
       fillColor: lightBgColor,
       textColor: [100, 110, 100],
@@ -196,7 +203,6 @@ export const generateShoppingListPDF = async (
       3: { cellWidth: 35, halign: 'right' }
     },
     willDrawCell: (data) => {
-      // Cria a borda pontilhada abaixo de cada linha de produto
       if (data.section === 'body' && data.row.index !== tableData.length - 1 && data.column.index === 0) {
         doc.setDrawColor(230, 230, 230);
         doc.setLineWidth(0.5);
@@ -206,7 +212,6 @@ export const generateShoppingListPDF = async (
       }
     },
     didDrawCell: (data) => {
-      // Adiciona o quadradinho do icone na primeira coluna
       if (data.section === 'body' && data.column.index === 0) {
         doc.setFillColor(lightBgColor[0], lightBgColor[1], lightBgColor[2]);
         doc.roundedRect(data.cell.x + 2, data.cell.y + 4, 8, 8, 2, 2, 'F');
@@ -224,10 +229,10 @@ export const generateShoppingListPDF = async (
   doc.setTextColor(100, 110, 100);
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text('Ticket médio por produto', 20, finalY + 8);
+  doc.text(dict['pdf.averageTicket'], 20, finalY + 8);
   doc.setTextColor(33, 37, 41);
   doc.setFont('helvetica', 'bold');
-  doc.text(formatCurrency(averageTicket), pageWidth - 20, finalY + 8, { align: 'right' });
+  doc.text(formatCurrency(averageTicket, lang), pageWidth - 20, finalY + 8, { align: 'right' });
 
   // Box total geral
   const totalY = finalY + 16;
@@ -235,9 +240,9 @@ export const generateShoppingListPDF = async (
   doc.roundedRect(15, totalY, pageWidth - 30, 18, 3, 3, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(10);
-  doc.text('Total geral', 20, totalY + 11);
+  doc.text(dict['pdf.grandTotal'], 20, totalY + 11);
   doc.setFontSize(14);
-  doc.text(formatCurrency(totalPrice), pageWidth - 20, totalY + 12, { align: 'right' });
+  doc.text(formatCurrency(totalPrice, lang), pageWidth - 20, totalY + 12, { align: 'right' });
 
   // Watermark (marca no fim da página)
   const watermarkY = totalY + 30;
@@ -248,7 +253,7 @@ export const generateShoppingListPDF = async (
   
   doc.setTextColor(primaryLightColor[0], primaryLightColor[1], primaryLightColor[2]);
   doc.setFontSize(8);
-  doc.text('Mercado', 15, watermarkY + 2);
+  doc.text(dict['pdf.title'], 15, watermarkY + 2);
   doc.setTextColor(150, 150, 150);
   doc.text(`${formattedDate.toLowerCase()} - ${timeStr}`, pageWidth - 15, watermarkY + 2, { align: 'right' });
 

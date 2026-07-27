@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './BottomSheet.module.css';
 import { useCart } from '../../contexts/CartContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface BottomSheetProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface BottomSheetProps {
 
 export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProps) {
   const { addProduct, updateProduct } = useCart();
+  const { language, t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [name, setName] = useState('');
@@ -22,12 +24,13 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
     if (isOpen) {
       if (editingProduct) {
         setName(editingProduct.name || '');
-        setPriceStr(editingProduct.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        const locale = language === 'pt' ? 'pt-BR' : 'en-US';
+        setPriceStr(editingProduct.price.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
         
         if (Number.isInteger(editingProduct.quantity)) {
           setQuantityStr(editingProduct.quantity.toString());
         } else {
-          setQuantityStr(editingProduct.quantity.toLocaleString('pt-BR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+          setQuantityStr(editingProduct.quantity.toLocaleString(locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
         }
         
         setUnit(editingProduct.unit || 'un');
@@ -40,7 +43,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
         setImageUrl(undefined);
       }
     }
-  }, [isOpen, editingProduct]);
+  }, [isOpen, editingProduct, language]);
 
   if (!isOpen) return null;
 
@@ -51,7 +54,8 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
       return;
     }
     const numValue = Number(value) / 100;
-    setPriceStr(numValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    const locale = language === 'pt' ? 'pt-BR' : 'en-US';
+    setPriceStr(numValue.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,7 +87,6 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, width, height);
           
-          // Comprime a imagem para JPEG com 70% de qualidade para economizar no localStorage
           setImageUrl(canvas.toDataURL('image/jpeg', 0.7));
         };
         img.src = reader.result as string;
@@ -143,7 +146,6 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
       });
     }
 
-    // Reset handled by onClose which changes isOpen to false
     onClose();
   };
 
@@ -154,10 +156,10 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
         
         <div className={styles.header}>
           <div>
-            <h2 className={styles.title}>{editingProduct ? 'Editar produto' : 'Novo produto'}</h2>
-            <p className={styles.subtitle}>Tire uma foto ou escreva o nome</p>
+            <h2 className={styles.title}>{editingProduct ? t('sheet.titleEdit') : t('sheet.titleNew')}</h2>
+            <p className={styles.subtitle}>{t('sheet.subtitle')}</p>
           </div>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button type="button" className={styles.closeBtn} onClick={onClose}>×</button>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form} noValidate>
@@ -187,7 +189,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
                     <circle cx="8.5" cy="8.5" r="1.5" />
                     <polyline points="21 15 16 10 5 21" />
                   </svg>
-                  <span>FOTO</span>
+                  <span>{t('sheet.photoLabel')}</span>
                 </div>
               )}
               <input 
@@ -201,10 +203,10 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
             </div>
 
             <div className={styles.inputGroup}>
-              <label>NOME</label>
+              <label>{t('sheet.nameLabel')}</label>
               <input 
                 type="text" 
-                placeholder="Leite, Arroz, Sabão..." 
+                placeholder={t('sheet.namePlaceholder')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -212,7 +214,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
           </div>
 
           <div className={styles.inputGroup}>
-            <label>PREÇO UNITÁRIO</label>
+            <label>{t('sheet.priceLabel')}</label>
             <div className={styles.priceInputWrapper}>
               <span className={styles.currencySymbol}>R$</span>
               <input 
@@ -230,7 +232,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
 
           <div className={styles.row}>
             <div className={styles.inputGroup}>
-              <label>QUANTIDADE</label>
+              <label>{t('sheet.quantityLabel')}</label>
               <div className={styles.quantityControl}>
                 <button 
                   type="button" 
@@ -257,13 +259,13 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
             </div>
 
             <div className={styles.inputGroup}>
-              <label>MEDIDA</label>
+              <label>{t('sheet.unitLabel')}</label>
               <select 
                 className={styles.unitSelect} 
                 value={unit} 
                 onChange={(e) => setUnit(e.target.value)}
               >
-                <option value="un">un</option>
+                <option value="un">{t('product.unit')}</option>
                 <option value="kg">kg</option>
                 <option value="g">g</option>
                 <option value="L">L</option>
@@ -273,10 +275,10 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
           </div>
 
           <button type="submit" className={styles.submitBtn} disabled={(!name && !imageUrl) || !priceStr || !quantityStr}>
-            {editingProduct ? 'Salvar alterações' : '+ Adicionar ao carrinho'}
+            {editingProduct ? t('sheet.submitEdit') : t('sheet.submitNew')}
           </button>
           
-          {!editingProduct && <p className={styles.footerHint}>Toque fora para fechar · adicione vários em sequência</p>}
+          {!editingProduct && <p className={styles.footerHint}>{t('sheet.footerHint')}</p>}
         </form>
       </div>
     </div>

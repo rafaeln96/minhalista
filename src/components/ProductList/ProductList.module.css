@@ -1,0 +1,17 @@
+.productList {
+  flex: 1;
+  padding: 16px 24px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.emptySearchState {
+  text-align: center;
+  padding: 32px 0;
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+}
