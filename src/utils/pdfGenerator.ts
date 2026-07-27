@@ -1,5 +1,3 @@
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { formatCurrency } from './format';
 import type { Product } from '../contexts/CartContext';
 
@@ -42,6 +40,10 @@ export const generateShoppingListPDF = async (
   totalUnits: number,
   totalPrice: number
 ) => {
+  const [{ jsPDF }, { default: autoTable }] = await Promise.all([
+    import('jspdf'),
+    import('jspdf-autotable')
+  ]);
   const doc = new jsPDF('p', 'mm', 'a4');
   const pageWidth = doc.internal.pageSize.getWidth();
   
