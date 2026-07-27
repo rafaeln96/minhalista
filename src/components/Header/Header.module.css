@@ -1,80 +1,108 @@
 .header {
   background-color: var(--color-primary);
   color: var(--color-text-white);
-  padding: 32px 24px 64px;
-  border-radius: 0 0 50% 50% / 0 0 24px 24px;
+  padding: 24px 24px 44px;
+  border-radius: 0 0 32px 32px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 20px;
+  box-shadow: 0 4px 20px rgba(28, 66, 48, 0.2);
 }
 
 .topRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+  width: 100%;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .logoIcon {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   background-color: rgba(255, 255, 255, 0.15);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
 }
 
 .logoText {
-  font-weight: 500;
-  font-size: 1.1rem;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  white-space: nowrap;
 }
 
 .topActions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .exportBtn {
-  color: rgba(255, 255, 255, 0.9);
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 6px;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   padding: 6px 14px;
   background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 100px;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+  cursor: pointer;
 }
 
 .exportBtn:hover:not(:disabled) {
   color: var(--color-text-white);
-  background-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
+  background-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
 }
 
 .exportBtn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .clearBtn {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: color 0.2s;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .clearBtn:hover {
-  color: var(--color-text-white);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .totalSection {
@@ -83,36 +111,105 @@
   align-items: center;
   text-align: center;
   gap: 4px;
+  margin-top: 2px;
 }
 
 .totalLabel {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-  letter-spacing: 0.05em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .totalValueContainer {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
 }
 
 .currencySymbol {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
+  opacity: 0.9;
 }
 
 .totalValue {
-  font-size: 4rem;
-  font-weight: 700;
-  line-height: 1;
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.05;
   font-family: 'Consolas', 'Courier New', monospace;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .itemCount {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+}
+
+/* Responsividade Mobile Extrema (App view em iPhones e Androids) */
+@media (max-width: 620px) {
+  .header {
+    padding: 18px 16px 36px;
+    gap: 16px;
+  }
+
+  .topRow {
+    flex-wrap: wrap;
+    row-gap: 12px;
+  }
+
+  .logo {
+    gap: 8px;
+  }
+
+  .logoIcon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .logoText {
+    font-size: 1.05rem;
+  }
+
+  .topActions {
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .actionButtons {
+    gap: 6px;
+  }
+
+  .exportBtn {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+
+  .clearBtn {
+    padding: 5px 6px;
+    font-size: 0.75rem;
+  }
+
+  .totalValue {
+    font-size: 2.75rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .header {
+    padding: 16px 12px 32px;
+  }
+
+  .exportBtn span {
+    display: inline;
+  }
+
+  .totalValue {
+    font-size: 2.4rem;
+  }
 }
