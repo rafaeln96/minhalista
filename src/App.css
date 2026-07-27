@@ -18,3 +18,16 @@
   /* Corrige o gap de 1px (linha fina) que aparece em alguns browsers mobile durante o scroll */
   box-shadow: 0 1px 0 var(--color-background);
 }
+
+.search-wrapper-transition {
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  max-height: 120px;
+  opacity: 1;
+}
+
+.search-hidden {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}

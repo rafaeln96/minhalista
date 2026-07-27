@@ -63,12 +63,12 @@ function AppContent() {
 
   return (
     <div className="app-container">
-      <div className="sticky-wrapper" key={products.length > 0 ? 'has-search' : 'no-search'}>
+      <div className="sticky-wrapper">
         <Header />
 
-        {products.length > 0 && (
+        <div className={`search-wrapper-transition ${products.length === 0 ? 'search-hidden' : ''}`}>
           <SearchBar value={searchQuery} onChange={setSearchQuery} />
-        )}
+        </div>
       </div>
 
       <ProductList
