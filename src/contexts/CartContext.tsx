@@ -27,7 +27,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [products, setProducts] = useState<Product[]>(() => {
     const stored = localStorage.getItem('@MinhaLista:products');
     if (stored) {
-      return JSON.parse(stored);
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.error('Erro ao carregar do localStorage (dados corrompidos)', e);
+        return [];
+      }
     }
     return [];
   });

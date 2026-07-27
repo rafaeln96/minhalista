@@ -16,6 +16,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
   
   const [name, setName] = useState('');
   const [priceStr, setPriceStr] = useState('');
+  const [priceValue, setPriceValue] = useState(0);
   const [quantityStr, setQuantityStr] = useState('1');
   const [unit, setUnit] = useState('un');
   const [imageUrl, setImageUrl] = useState<string | undefined>();
@@ -25,6 +26,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
       if (editingProduct) {
         setName(editingProduct.name || '');
         const locale = language === 'pt' ? 'pt-BR' : 'en-US';
+        setPriceValue(editingProduct.price);
         setPriceStr(editingProduct.price.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
         
         if (Number.isInteger(editingProduct.quantity)) {
@@ -38,6 +40,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
       } else {
         setName('');
         setPriceStr('');
+        setPriceValue(0);
         setQuantityStr('1');
         setUnit('un');
         setImageUrl(undefined);
@@ -51,9 +54,11 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
     let value = e.target.value.replace(/\D/g, '');
     if (value === '') {
       setPriceStr('');
+      setPriceValue(0);
       return;
     }
     const numValue = Number(value) / 100;
+    setPriceValue(numValue);
     const locale = language === 'pt' ? 'pt-BR' : 'en-US';
     setPriceStr(numValue.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
   };
@@ -96,10 +101,10 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
   };
 
   const parseQuantity = (str: string) => {
-    if (str.includes(',')) {
+    if (language === 'pt') {
       return parseFloat(str.replace(/\./g, '').replace(',', '.')) || 0;
     }
-    return parseFloat(str) || 0;
+    return parseFloat(str.replace(/,/g, '')) || 0;
   };
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,7 +130,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
     e.preventDefault();
     if ((!name && !imageUrl) || !priceStr || !quantityStr) return;
 
-    const price = Number(priceStr.replace(/\./g, '').replace(',', '.'));
+    const price = priceValue;
     const quantity = parseQuantity(quantityStr);
     
     if (editingProduct) {
@@ -216,7 +221,7 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
           <div className={styles.inputGroup}>
             <label>{t('sheet.priceLabel')}</label>
             <div className={styles.priceInputWrapper}>
-              <span className={styles.currencySymbol}>R$</span>
+              <span className={styles.currencySymbol}>{language === 'pt' ? 'R$' : '$'}</span>
               <input 
                 type="text" 
                 inputMode="numeric"
