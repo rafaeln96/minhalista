@@ -1,12 +1,13 @@
 .productList {
   flex: 1;
-  padding: 16px 24px 100px;
+  padding: 16px 20px 100px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   max-width: 800px;
   width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .emptySearchState {
@@ -14,4 +15,11 @@
   padding: 32px 0;
   color: var(--color-text-light);
   font-size: 0.95rem;
+}
+
+@media (max-width: 480px) {
+  .productList {
+    padding: 12px 12px 100px;
+    gap: 10px;
+  }
 }

@@ -1,22 +1,23 @@
 .card {
   background-color: var(--color-surface);
   border-radius: var(--radius-lg);
-  padding: 16px;
+  padding: 14px 16px;
   display: flex;
-  gap: 16px;
+  gap: 14px;
   box-shadow: var(--shadow-sm);
-  margin-bottom: 16px;
   transition: box-shadow 0.2s, transform 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .card:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
 }
 
 .imageContainer {
-  width: 72px;
-  height: 72px;
+  width: 68px;
+  height: 68px;
   border-radius: var(--radius-md);
   overflow: hidden;
   flex-shrink: 0;
@@ -29,7 +30,7 @@
 }
 
 .imageContainer.clickable:hover {
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .image {
@@ -54,40 +55,53 @@
 
 .content {
   flex: 1;
+  min-width: 0; /* IMPEDE QUEBRA DE LAYOUT NO FLEXBOX EM IPHONES */
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: baseline;
+  gap: 8px;
   margin-bottom: 4px;
 }
 
 .name {
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 600;
   color: var(--color-text);
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
 }
 
 .totalPrice {
   font-size: 1rem;
   font-weight: 700;
   color: var(--color-text);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .details {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .unitDetail {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--color-text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .unitPrice {
@@ -99,12 +113,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 8px;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
 }
 
 .actions {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .deleteBtn, .editBtn {
@@ -116,6 +134,8 @@
   justify-content: center;
   transition: all 0.2s;
   background-color: var(--color-surface-hover);
+  border: none;
+  cursor: pointer;
 }
 
 .deleteBtn {
@@ -141,8 +161,8 @@
   align-items: center;
   background-color: var(--color-surface-hover);
   border-radius: var(--radius-md);
-  padding: 4px;
-  width: fit-content;
+  padding: 3px;
+  flex-shrink: 0;
 }
 
 .qtyBtn {
@@ -152,23 +172,27 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-size: 1.2rem;
-  font-weight: 500;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: var(--color-primary);
   transition: background-color 0.2s;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
 
 .qtyBtn:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(0, 0, 0, 0.08);
 }
 
 .qtyValue {
-  min-width: 24px;
+  min-width: 20px;
   text-align: center;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--color-text);
-  margin: 0 8px;
+  margin: 0 6px;
+  white-space: nowrap;
 }
 
 .imageOverlay {
@@ -214,6 +238,9 @@
   justify-content: center;
   opacity: 0.8;
   transition: opacity 0.2s;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 .closeExpandedBtn:hover {
@@ -223,4 +250,40 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .imageContainer {
+    width: 60px;
+    height: 60px;
+  }
+
+  .name {
+    font-size: 0.92rem;
+  }
+
+  .totalPrice {
+    font-size: 0.95rem;
+  }
+
+  .qtyBtn {
+    width: 26px;
+    height: 26px;
+    font-size: 1rem;
+  }
+
+  .qtyValue {
+    font-size: 0.85rem;
+    margin: 0 4px;
+  }
+
+  .deleteBtn, .editBtn {
+    width: 30px;
+    height: 30px;
+  }
 }
