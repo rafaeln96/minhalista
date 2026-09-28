@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, type ReactNode, useEffect } from 'react';
 import { useLanguage } from './LanguageContext';
-import { roundMoney } from '../utils/format';
+import { calculateItemTotal } from '../utils/format';
 
 export interface Product {
   id: string;
@@ -98,9 +98,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, 0).toFixed(3));
 
   const totalPrice = products.reduce((acc, p) => {
-    const isUnitMultiplier = p.unit === 'un';
-    const itemTotal = isUnitMultiplier ? p.price * p.quantity : p.price;
-    return acc + roundMoney(itemTotal);
+    return acc + calculateItemTotal(p.price, p.quantity, p.unit);
   }, 0);
 
   return (

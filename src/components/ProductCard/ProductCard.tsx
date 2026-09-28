@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styles from './ProductCard.module.css';
 import { type Product, useCart } from '../../contexts/CartContext';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { formatCurrency, getQuantityStep, roundMoney, roundQuantity } from '../../utils/format';
+import { calculateItemTotal, formatCurrency, getQuantityStep, roundQuantity } from '../../utils/format';
 
 interface ProductCardProps {
   product: Product;
@@ -31,9 +31,7 @@ export function ProductCard({ product, onEdit, onRemove }: ProductCardProps) {
     updateQuantity(product.id, newNum);
   };
 
-  const isUnitMultiplier = product.unit === 'un';
-  const itemTotal = isUnitMultiplier ? product.quantity * product.price : product.price;
-  const totalPrice = roundMoney(itemTotal);
+  const totalPrice = calculateItemTotal(product.price, product.quantity, product.unit);
 
   const unitLabel = product.unit === 'un' ? t('product.unit') : product.unit;
 
@@ -72,9 +70,8 @@ export function ProductCard({ product, onEdit, onRemove }: ProductCardProps) {
           <div className={styles.details}>
             <span className={styles.unitDetail}>
               {formattedQuantity} {unitLabel}
-              {isUnitMultiplier && (
-                <> × <span className={styles.unitPrice}>{formatCurrency(product.price, language)}</span></>
-              )}
+              {' × '}
+              <span className={styles.unitPrice}>{formatCurrency(product.price, language)}</span>
             </span>
           </div>
           

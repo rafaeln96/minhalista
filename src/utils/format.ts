@@ -29,6 +29,11 @@ export const roundMoney = (value: number): number => {
   return Number(Math.round(Number(value + 'e2')) + 'e-2');
 };
 
+export const calculateItemTotal = (price: number, quantity: number, unit: string): number => {
+  const measure = unit === 'g' || unit === 'ml' ? quantity / 1000 : quantity;
+  return roundMoney(price * measure);
+};
+
 export const getQuantityStep = (unit: string): number => {
   return unit === 'un' || unit === 'g' || unit === 'ml' ? 1 : 0.1;
 };

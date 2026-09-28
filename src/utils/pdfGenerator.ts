@@ -1,4 +1,4 @@
-import { formatCurrency, roundMoney } from './format';
+import { calculateItemTotal, formatCurrency } from './format';
 import type { Product } from '../contexts/CartContext';
 import { translations, type Language } from '../i18n/translations';
 
@@ -226,9 +226,7 @@ export const generateShoppingListPDF = async (
     const unitSuffix = product.unit === 'un' ? `${unitLabel}.` : unitLabel;
     doc.text(`${quantityStr} ${unitSuffix}`, margin + 35, currentY + 11);
 
-    const isUnitMultiplier = product.unit === 'un';
-    const itemTotalRaw = isUnitMultiplier ? product.quantity * product.price : product.price;
-    const roundedItemTotal = roundMoney(itemTotalRaw);
+    const roundedItemTotal = calculateItemTotal(product.price, product.quantity, product.unit);
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(6.5);
@@ -275,7 +273,7 @@ export const generateShoppingListPDF = async (
   doc.text(dict['pdf.avgPerProduct'], margin + 8, currentY + 9);
 
   const maxSubtotal = products.length > 0
-    ? Math.max(...products.map(p => roundMoney(p.unit === 'un' ? p.quantity * p.price : p.price)))
+    ? Math.max(...products.map(p => calculateItemTotal(p.price, p.quantity, p.unit)))
     : 0;
   const ratio = maxSubtotal > 0 ? Math.min(0.85, Math.max(0.15, averageTicket / maxSubtotal)) : 0.5;
   const barWidth = 90;

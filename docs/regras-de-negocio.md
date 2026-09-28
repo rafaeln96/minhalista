@@ -4,12 +4,12 @@ Este documento descreve decisões de cálculo e comportamento que não são óbv
 
 ## Preço por unidade vs. preço por medida
 
-Cada produto tem uma `unit` (`un`, `kg`, `g`, `L`, `ml`). O significado do campo `price` muda de acordo com ela:
+Cada produto tem uma `unit` (`un`, `kg`, `g`, `L`, `ml`). O campo `price` é sempre o preço de **1 unidade da medida "grande"** correspondente — 1 unidade, 1 kg ou 1 L — mesmo quando a medida escolhida para a quantidade é a "pequena" (`g` ou `ml`):
 
-- **`un` (unidade):** `price` é o preço de uma unidade individual. O subtotal do item é `price × quantity`.
-- **`kg` / `g` / `L` / `ml` (peso ou volume):** `price` já é o valor final da embalagem/etiqueta pesada no mercado. O subtotal do item é o próprio `price`, sem multiplicar pela quantidade.
+- **`un` / `kg` / `L`:** `quantity` já está na mesma escala do `price`. Subtotal = `price × quantity` (ex.: R$ 8,00/kg × 1,2 kg = R$ 9,60).
+- **`g` / `ml`:** `quantity` é digitada em gramas/mililitros (ex.: `250` para 250 g), mas `price` continua sendo por kg/L. Por isso `quantity` é dividida por 1000 antes de multiplicar (ex.: R$ 23,00/kg × 250 g → R$ 23,00 × 0,25 = R$ 5,75).
 
-Essa regra está implementada em três lugares que precisam continuar consistentes entre si:
+Essa conversão está centralizada em `calculateItemTotal` (`src/utils/format.ts`) e é reutilizada em todos os lugares que calculam subtotal — nenhum deles deve reimplementar a fórmula:
 
 - `src/contexts/CartContext.tsx` — cálculo do `totalPrice` do carrinho.
 - `src/components/ProductCard/ProductCard.tsx` — exibição do subtotal no card do produto.
