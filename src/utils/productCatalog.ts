@@ -15,6 +15,7 @@ export const PRODUCT_CATALOG: CatalogEntry[] = [
   { name: 'Álcool em gel', emoji: '🧴', keywords: ['alcool em gel', 'alcool gel', 'hand sanitizer'] },
   { name: 'Alface', emoji: '🥬', keywords: ['alface', 'lettuce', 'verdura'] },
   { name: 'Alho', emoji: '🧄', keywords: ['alho', 'garlic'] },
+  { name: 'Ariel', emoji: '🧴', keywords: ['ariel'] },
   { name: 'Arroz', emoji: '🍚', keywords: ['arroz', 'rice'] },
   { name: 'Atum', emoji: '🐟', keywords: ['atum', 'tuna'] },
   { name: 'Azeite', emoji: '🫒', keywords: ['azeite', 'olive oil'] },
@@ -25,6 +26,7 @@ export const PRODUCT_CATALOG: CatalogEntry[] = [
   { name: 'Berinjela', emoji: '🍆', keywords: ['berinjela', 'eggplant'] },
   { name: 'Biscoito', emoji: '🍪', keywords: ['biscoito', 'bolacha', 'cookie'] },
   { name: 'Bolo', emoji: '🎂', keywords: ['bolo', 'cake'] },
+  { name: 'Brahma', emoji: '🍺', keywords: ['brahma'] },
   { name: 'Brócolis', emoji: '🥦', keywords: ['brocolis', 'broccoli'] },
   { name: 'Café', emoji: '☕', keywords: ['cafe', 'coffee'] },
   { name: 'Camarão', emoji: '🦐', keywords: ['camarao', 'shrimp', 'prawn'] },
@@ -35,19 +37,25 @@ export const PRODUCT_CATALOG: CatalogEntry[] = [
   { name: 'Cereja', emoji: '🍒', keywords: ['cereja', 'cherry'] },
   { name: 'Cerveja', emoji: '🍺', keywords: ['cerveja', 'beer'] },
   { name: 'Chá', emoji: '🍵', keywords: ['cha', 'tea'] },
+  { name: 'Cheetos', emoji: '🍟', keywords: ['cheetos'] },
   { name: 'Chuchu', emoji: '🥒', keywords: ['chuchu', 'chayote'] },
+  { name: 'Coca-Cola', emoji: '🥤', keywords: ['coca cola', 'coca'] },
   { name: 'Coco', emoji: '🥥', keywords: ['coco', 'coconut'] },
   { name: 'Creme dental', emoji: '🪥', keywords: ['pasta de dente', 'creme dental', 'toothpaste'] },
   { name: 'Desinfetante', emoji: '🧴', keywords: ['desinfetante', 'disinfectant'] },
+  { name: 'Doritos', emoji: '🍟', keywords: ['doritos'] },
   { name: 'Ervilha', emoji: '🫛', keywords: ['ervilha', 'peas'] },
   { name: 'Espinafre', emoji: '🥬', keywords: ['espinafre', 'spinach'] },
   { name: 'Esponja', emoji: '🧽', keywords: ['esponja', 'sponge'] },
+  { name: 'Fanta', emoji: '🥤', keywords: ['fanta'] },
   { name: 'Farinha de trigo', emoji: '🌾', keywords: ['farinha', 'flour', 'farinha de mandioca'] },
   { name: 'Feijão', emoji: '🫘', keywords: ['feijao', 'beans'] },
   { name: 'Fralda', emoji: '👶', keywords: ['fralda', 'diaper'] },
   { name: 'Frango', emoji: '🍗', keywords: ['frango', 'galinha', 'chicken'] },
   { name: 'Granola', emoji: '🥣', keywords: ['granola', 'cereal matinal', 'cereal'] },
+  { name: 'Guaraná Antarctica', emoji: '🥤', keywords: ['guarana antarctica', 'guarana'] },
   { name: 'Hambúrguer', emoji: '🍔', keywords: ['hamburguer', 'hamburger', 'burger'] },
+  { name: 'Heineken', emoji: '🍺', keywords: ['heineken'] },
   { name: 'Iogurte', emoji: '🥣', keywords: ['iogurte', 'yogurt', 'yoghurt'] },
   { name: 'Kiwi', emoji: '🥝', keywords: ['kiwi'] },
   { name: 'Laranja', emoji: '🍊', keywords: ['laranja', 'orange'] },
@@ -67,13 +75,18 @@ export const PRODUCT_CATALOG: CatalogEntry[] = [
   { name: 'Mirtilo', emoji: '🫐', keywords: ['mirtilo', 'amora', 'framboesa', 'blueberry', 'raspberry'] },
   { name: 'Molho de pimenta', emoji: '🌶️', keywords: ['molho de pimenta', 'pimenta do reino', 'hot sauce'] },
   { name: 'Morango', emoji: '🍓', keywords: ['morango', 'strawberry'] },
+  { name: 'Nescau', emoji: '🍫', keywords: ['nescau'] },
   { name: 'Óleo', emoji: '🛢️', keywords: ['oleo', 'oil', 'oleo de soja'] },
+  { name: 'Omo', emoji: '🧴', keywords: ['omo'] },
+  { name: 'Ovomaltine', emoji: '🍫', keywords: ['ovomaltine'] },
   { name: 'Ovos', emoji: '🥚', keywords: ['ovo', 'ovos', 'egg', 'eggs'] },
   { name: 'Pão', emoji: '🍞', keywords: ['pao', 'bread', 'pao de forma', 'pao frances'] },
   { name: 'Papel higiênico', emoji: '🧻', keywords: ['papel higienico', 'toilet paper'] },
   { name: 'Papel toalha', emoji: '🧻', keywords: ['papel toalha', 'paper towel'] },
+  { name: 'Passatempo', emoji: '🍪', keywords: ['passatempo'] },
   { name: 'Peixe', emoji: '🐟', keywords: ['peixe', 'fish'] },
   { name: 'Pepino', emoji: '🥒', keywords: ['pepino', 'cucumber'] },
+  { name: 'Pepsi', emoji: '🥤', keywords: ['pepsi'] },
   { name: 'Pêra', emoji: '🍐', keywords: ['pera', 'pear'] },
   { name: 'Pêssego', emoji: '🍑', keywords: ['pessego', 'peach'] },
   { name: 'Pimentão', emoji: '🫑', keywords: ['pimentao', 'pepper'] },
@@ -85,6 +98,7 @@ export const PRODUCT_CATALOG: CatalogEntry[] = [
   { name: 'Ração', emoji: '🐾', keywords: ['racao', 'petisco', 'pet food'] },
   { name: 'Refrigerante', emoji: '🥤', keywords: ['refrigerante', 'refri', 'soda'] },
   { name: 'Repolho', emoji: '🥬', keywords: ['repolho', 'cabbage'] },
+  { name: 'Ruffles', emoji: '🍟', keywords: ['ruffles'] },
   { name: 'Sabão em pó', emoji: '🧴', keywords: ['sabao em po', 'sabao', 'detergente', 'soap', 'amaciante'] },
   { name: 'Sabonete', emoji: '🧼', keywords: ['sabonete', 'soap bar'] },
   { name: 'Sal', emoji: '🧂', keywords: ['sal', 'salt'] },
@@ -92,12 +106,16 @@ export const PRODUCT_CATALOG: CatalogEntry[] = [
   { name: 'Salmão', emoji: '🐟', keywords: ['salmao', 'salmon'] },
   { name: 'Sardinha', emoji: '🐟', keywords: ['sardinha', 'sardine'] },
   { name: 'Shampoo', emoji: '🧴', keywords: ['shampoo', 'condicionador', 'conditioner'] },
+  { name: 'Skol', emoji: '🍺', keywords: ['skol'] },
   { name: 'Sopa', emoji: '🍲', keywords: ['sopa', 'soup'] },
   { name: 'Sorvete', emoji: '🍨', keywords: ['sorvete', 'ice cream'] },
+  { name: 'Sprite', emoji: '🥤', keywords: ['sprite'] },
   { name: 'Suco', emoji: '🧃', keywords: ['suco', 'juice'] },
   { name: 'Tangerina', emoji: '🍊', keywords: ['tangerina', 'mexerica', 'bergamota'] },
   { name: 'Tapioca', emoji: '🫓', keywords: ['tapioca', 'pao arabe', 'wrap'] },
+  { name: 'Toddy', emoji: '🍫', keywords: ['toddy'] },
   { name: 'Tomate', emoji: '🍅', keywords: ['tomate', 'tomato', 'molho de tomate', 'extrato de tomate'] },
+  { name: 'Trakinas', emoji: '🍪', keywords: ['trakinas'] },
   { name: 'Uva', emoji: '🍇', keywords: ['uva', 'uvas', 'grape'] },
   { name: 'Vagem', emoji: '🫛', keywords: ['vagem', 'green beans'] },
   { name: 'Vassoura', emoji: '🧹', keywords: ['vassoura', 'broom'] },
@@ -110,7 +128,7 @@ const normalize = (value: string): string =>
     .toLowerCase()
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
-    .trim();
+    .replace(/[^a-z0-9]/g, '');
 
 export function findEmojiForProduct(name: string): string | null {
   const normalized = normalize(name);
@@ -120,8 +138,9 @@ export function findEmojiForProduct(name: string): string | null {
 
   for (const entry of PRODUCT_CATALOG) {
     for (const keyword of entry.keywords) {
-      if (normalized === keyword || normalized.includes(keyword) || keyword.includes(normalized)) {
-        const matchLength = Math.min(keyword.length, normalized.length);
+      const normalizedKeyword = normalize(keyword);
+      if (normalized === normalizedKeyword || normalized.includes(normalizedKeyword) || normalizedKeyword.includes(normalized)) {
+        const matchLength = Math.min(normalizedKeyword.length, normalized.length);
         if (!best || matchLength > best.matchLength) {
           best = { emoji: entry.emoji, matchLength };
         }
@@ -163,8 +182,9 @@ export function suggestCorrection(name: string): string | null {
 
   for (const entry of PRODUCT_CATALOG) {
     for (const keyword of entry.keywords) {
-      const threshold = keyword.length <= 4 ? 1 : 2;
-      const distance = levenshteinDistance(normalized, keyword);
+      const normalizedKeyword = normalize(keyword);
+      const threshold = normalizedKeyword.length <= 4 ? 1 : 2;
+      const distance = levenshteinDistance(normalized, normalizedKeyword);
       if (distance > 0 && distance <= threshold) {
         if (!best || distance < best.distance) {
           best = { name: entry.name, distance };

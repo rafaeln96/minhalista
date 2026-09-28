@@ -67,6 +67,10 @@ Como o app roda inteiramente no front-end e é hospedado no GitHub Pages (sem ba
 
 Essa cobertura é limitada aos itens cadastrados no catálogo; produtos fora dessa lista continuam usando o ícone genérico e não recebem sugestão de correção.
 
+Além das categorias genéricas ("Refrigerante", "Cerveja", "Achocolatado" etc.), o catálogo também cadastra marcas populares no Brasil como entradas próprias (ex.: `Coca-Cola`, `Pepsi`, `Guaraná Antarctica`, `Skol`, `Nescau`, `Omo`, `Doritos`), já que na prática o usuário digita o nome da marca, não da categoria. Cada marca é uma entrada separada (não apenas mais uma palavra-chave da categoria) para que a sugestão de correção aponte para o nome certo — sem isso, um typo em "Coca-Cola" seria "corrigido" para o genérico "Refrigerante".
+
+`normalize()` remove todo caractere que não seja letra ou número (além de acento e caixa), então "Coca-Cola", "CocaCola" e "Coca Cola" normalizam para o mesmo texto e batem com uma única palavra-chave cadastrada — não é preciso listar cada variação de espaço/hífen manualmente.
+
 ### Emoji no PDF é uma imagem, não texto
 
 `jspdf` só sabe desenhar texto com as 14 fontes padrão do PDF (Helvetica, Courier, Times), que não têm glifos coloridos de emoji — desenhar o caractere via `doc.text()` resultaria em um quadrado vazio. Por isso `renderEmojiToPNG` (em `pdfGenerator.ts`) desenha o emoji em um `<canvas>` usando a fonte do sistema (que sabe renderizar emoji colorido) e converte para PNG, que é então inserido via `doc.addImage()` — a mesma técnica usada para a logo do cabeçalho. Os resultados ficam em cache (`emojiImageCache`) para não redesenhar o mesmo emoji a cada produto repetido na lista.
