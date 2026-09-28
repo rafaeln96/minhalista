@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import styles from './BottomSheet.module.css';
 import { type Product, useCart } from '../../contexts/CartContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { getQuantityStep, roundQuantity } from '../../utils/format';
+import { suggestCorrection } from '../../utils/productCatalog';
 
 interface BottomSheetProps {
   isOpen: boolean;
@@ -48,6 +49,8 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
       }
     }
   }, [isOpen, editingProduct, language]);
+
+  const nameSuggestion = useMemo(() => suggestCorrection(name), [name]);
 
   if (!isOpen) return null;
 
@@ -166,8 +169,8 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
+    <div className={styles.overlay}>
+      <div className={styles.sheet}>
         <div className={styles.dragHandle} />
         
         <div className={styles.header}>
@@ -220,12 +223,21 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
 
             <div className={styles.inputGroup}>
               <label>{t('sheet.nameLabel')}</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder={t('sheet.namePlaceholder')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
+              {nameSuggestion && (
+                <button
+                  type="button"
+                  className={styles.nameSuggestion}
+                  onClick={() => setName(nameSuggestion)}
+                >
+                  {t('sheet.nameSuggestion', { name: nameSuggestion })}
+                </button>
+              )}
             </div>
           </div>
 

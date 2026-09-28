@@ -40,6 +40,33 @@ O campo de quantidade aceita entrada livre de texto. Em português, `.` é trata
 
 A lista de produtos é salva no `localStorage` a cada alteração (`src/contexts/CartContext.tsx`). Se o navegador recusar a escrita (ex.: armazenamento cheio, modo privado, PWA em iOS com quota reduzida), o app não falha silenciosamente: um aviso visível (`src/components/Toast/Toast.tsx`) é exibido ao usuário informando que a alteração pode não ter sido salva.
 
+## Modais fecham apenas por ação explícita, nunca ao clicar fora
+
+`BottomSheet.tsx` (formulário de produto), a imagem expandida em `ProductCard.tsx` e `ConfirmModal.tsx` não têm `onClick` no overlay de fundo — clicar fora deliberadamente **não** fecha nada. Isso foi uma decisão de produto (evitar fechar o formulário sem querer e perder o que já foi digitado), não um esquecimento: `BottomSheet` e a imagem expandida têm um botão "×" explícito para fechar; `ConfirmModal` não tem "×", mas seus botões "Cancelar"/"Confirmar" já cumprem esse papel de ação explícita. Ao mexer em qualquer modal novo, manter o mesmo padrão (sem `onClick` no overlay).
+
 ## Geração de PDF
 
-A geração do PDF (`src/utils/pdfGenerator.ts`) roda inteiramente no navegador via `jspdf`/`jspdf-autotable`, carregados sob demanda (`import()` dinâmico) para não engordar o bundle inicial. O logo do app é carregado e processado em um `<canvas>` para transformar pixels muito claros (branco/quase branco) em transparentes, permitindo sobrepor o logo em um fundo colorido sem uma borda branca visível ao redor. Se qualquer etapa da geração falhar, o erro é capturado no componente que chama a função e um aviso visível é exibido ao usuário.
+A geração do PDF (`src/utils/pdfGenerator.ts`) roda inteiramente no navegador via `jspdf`/`jspdf-autotable`, carregados sob demanda (`import()` dinâmico) para não engordar o bundle inicial. Se qualquer etapa da geração falhar, o erro é capturado no componente que chama a função e um aviso visível é exibido ao usuário.
+
+### Logo do cabeçalho (`loadRoundedIcon`)
+
+O arquivo `public/icon-512x512.png` é na verdade um JPEG (sem canal alfa) com um fundo branco nos quatro cantos ao redor do ícone com cantos arredondados. Não dá para simplesmente transformar pixels brancos em transparentes: o próprio desenho do carrinho dentro do ícone é branco, e esse truque apagaria o desenho junto com o fundo.
+
+Em vez disso, `loadRoundedIcon` desenha a imagem em um `<canvas>` recortado por um caminho de retângulo arredondado (`ctx.clip()`), calculado a partir de `cornerRatio` (≈ 15% do tamanho da imagem, medido a olho a partir do próprio arquivo). Esse recorte é puramente geométrico: só remove os quatro cantos externos e nunca toca nos pixels internos do ícone, não importa a cor deles.
+
+### Layout compacto do cabeçalho
+
+O cabeçalho do PDF usa 52mm de altura. Data/hora (canto esquerdo) e total (canto direito) dividem a mesma linha em vez de ficarem empilhados, e a grade de pontos decorativa fica restrita às duas primeiras linhas (perto do título) para nunca invadir visualmente essa linha de informações.
+
+## Emoji ilustrativo quando o produto não tem foto
+
+Como o app roda inteiramente no front-end e é hospedado no GitHub Pages (sem backend), não há como gerar uma imagem real por IA para cada produto sem foto — exigiria uma API paga com chave exposta no cliente. Em vez disso, `src/utils/productCatalog.ts` mantém um dicionário local de produtos comuns (nome canônico + emoji + lista de palavras-chave em pt/en) e duas funções:
+
+- `findEmojiForProduct(name)`: normaliza o texto digitado (minúsculas, sem acento) e procura a palavra-chave cadastrada que tem a maior sobreposição com o nome do produto — o casamento mais longo vence, para que "Leite condensado" prefira a entrada específica em vez de cair genericamente em "Leite". Usado em `ProductCard.tsx` (substitui o ícone genérico de placeholder) e em `pdfGenerator.ts` (ao lado do nome, quando o produto não tem foto).
+- `suggestCorrection(name)`: só entra em ação quando `findEmojiForProduct` **não** encontrou nada (ou seja, o texto não bate com nenhuma palavra-chave conhecida) e usa distância de Levenshtein para achar um item do catálogo a 1–2 caracteres de diferença — o limite é mais rígido (1) para palavras curtas e mais tolerante (2) para palavras longas, para não sugerir correções bobas em textos muito curtos. É consumida pelo campo de nome em `BottomSheet.tsx`, que mostra "Você quis dizer…?" como sugestão clicável — nunca substitui o texto sozinho, para não trocar por engano algo que o usuário quis escrever diferente.
+
+Essa cobertura é limitada aos itens cadastrados no catálogo; produtos fora dessa lista continuam usando o ícone genérico e não recebem sugestão de correção.
+
+### Emoji no PDF é uma imagem, não texto
+
+`jspdf` só sabe desenhar texto com as 14 fontes padrão do PDF (Helvetica, Courier, Times), que não têm glifos coloridos de emoji — desenhar o caractere via `doc.text()` resultaria em um quadrado vazio. Por isso `renderEmojiToPNG` (em `pdfGenerator.ts`) desenha o emoji em um `<canvas>` usando a fonte do sistema (que sabe renderizar emoji colorido) e converte para PNG, que é então inserido via `doc.addImage()` — a mesma técnica usada para a logo do cabeçalho. Os resultados ficam em cache (`emojiImageCache`) para não redesenhar o mesmo emoji a cada produto repetido na lista.

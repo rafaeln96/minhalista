@@ -1,8 +1,9 @@
 import { calculateItemTotal, formatCurrency } from './format';
 import type { Product } from '../contexts/CartContext';
 import { translations, type Language } from '../i18n/translations';
+import { findEmojiForProduct } from './productCatalog';
 
-const loadTransparentImage = (url: string): Promise<string | HTMLImageElement> => {
+const loadRoundedIcon = (url: string, cornerRatio = 0.152): Promise<string> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'Anonymous';
@@ -11,28 +12,52 @@ const loadTransparentImage = (url: string): Promise<string | HTMLImageElement> =
       canvas.width = img.width;
       canvas.height = img.height;
       const ctx = canvas.getContext('2d');
-      if (!ctx) return resolve(img);
+      if (!ctx) return resolve(url);
+
+      const w = img.width;
+      const h = img.height;
+      const r = Math.min(w, h) * cornerRatio;
+
+      ctx.beginPath();
+      ctx.moveTo(r, 0);
+      ctx.lineTo(w - r, 0);
+      ctx.arcTo(w, 0, w, r, r);
+      ctx.lineTo(w, h - r);
+      ctx.arcTo(w, h, w - r, h, r);
+      ctx.lineTo(r, h);
+      ctx.arcTo(0, h, 0, h - r, r);
+      ctx.lineTo(0, r);
+      ctx.arcTo(0, 0, r, 0, r);
+      ctx.closePath();
+      ctx.clip();
 
       ctx.drawImage(img, 0, 0);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-
-        if (r > 240 && g > 240 && b > 240) {
-          data[i + 3] = 0;
-        }
-      }
-
-      ctx.putImageData(imageData, 0, 0);
       resolve(canvas.toDataURL('image/png'));
     };
     img.onerror = reject;
     img.src = url;
   });
+};
+
+const emojiImageCache = new Map<string, string>();
+
+const renderEmojiToPNG = (emoji: string, sizePx = 96): string => {
+  if (emojiImageCache.has(emoji)) return emojiImageCache.get(emoji)!;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = sizePx;
+  canvas.height = sizePx;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return '';
+
+  ctx.font = `${sizePx * 0.75}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(emoji, sizePx / 2, sizePx / 2 + sizePx * 0.05);
+
+  const dataUrl = canvas.toDataURL('image/png');
+  emojiImageCache.set(emoji, dataUrl);
+  return dataUrl;
 };
 
 const pad2 = (value: number): string => String(value).padStart(2, '0');
@@ -94,19 +119,17 @@ export const generateShoppingListPDF = async (
     }
   };
 
-  // ---- Header ----
-  const headerHeight = 82;
+  const headerHeight = 52;
   doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.rect(0, 0, pageWidth, headerHeight, 'F');
 
-  // Decorative dot grid
   const dotGridX = pageWidth - 78;
-  const highlighted = new Set(['1-0', '2-1', '5-2']);
-  for (let row = 0; row < 4; row++) {
+  const highlighted = new Set(['3-1']);
+  for (let row = 0; row < 2; row++) {
     for (let col = 0; col < 8; col++) {
       const isHighlighted = highlighted.has(`${col}-${row}`);
       const cx = dotGridX + col * 8.2;
-      const cy = 13 + row * 10;
+      const cy = 10 + row * 7;
       if (isHighlighted) {
         doc.setFillColor(primaryLightColor[0], primaryLightColor[1], primaryLightColor[2]);
         doc.circle(cx, cy, 0.9, 'F');
@@ -117,55 +140,63 @@ export const generateShoppingListPDF = async (
     }
   }
 
+  const logoSize = 13;
+  const logoX = margin;
+  const logoY = 9;
   try {
     const logoUrl = import.meta.env.BASE_URL + 'icon-512x512.png';
-    const transparentLogo = await loadTransparentImage(logoUrl);
-    doc.setFillColor(primaryLightColor[0], primaryLightColor[1], primaryLightColor[2]);
-    doc.roundedRect(15, 13, 13, 13, 3, 3, 'F');
-    doc.addImage(transparentLogo, 'PNG', 17.5, 15.5, 8, 8);
+    const roundedLogo = await loadRoundedIcon(logoUrl);
+    doc.addImage(roundedLogo, 'PNG', logoX, logoY, logoSize, logoSize);
   } catch (error) {
     console.warn('Erro ao carregar o logo, usando fallback:', error);
     doc.setFillColor(primaryLightColor[0], primaryLightColor[1], primaryLightColor[2]);
-    doc.roundedRect(15, 13, 13, 13, 3, 3, 'F');
+    doc.roundedRect(logoX, logoY, logoSize, logoSize, 3, 3, 'F');
     doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text('M', 21.5, 21.5, { align: 'center' });
+    doc.text('M', logoX + logoSize / 2, logoY + logoSize / 2 + 1.5, { align: 'center' });
   }
 
+  const textX = logoX + logoSize + 4;
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(20);
-  doc.text(dict['pdf.title'], 32, 23);
-
-  doc.setFontSize(7.5);
-  doc.setTextColor(mutedOnDark[0], mutedOnDark[1], mutedOnDark[2]);
-  doc.text(`${dict['pdf.subtitle']} · ${itemsLabel}`, 32, 29);
+  doc.setFontSize(16);
+  doc.text(dict['pdf.title'], textX, logoY + 6.5);
 
   doc.setFontSize(7);
-  doc.setFont('helvetica', 'bold');
-  doc.text(dict['pdf.issuedAt'], 32, 41);
+  doc.setTextColor(mutedOnDark[0], mutedOnDark[1], mutedOnDark[2]);
+  doc.text(`${dict['pdf.subtitle']} · ${itemsLabel}`, textX, logoY + 12);
 
+  const infoLabelY = headerHeight - 18;
+  const infoValueY = headerHeight - 7;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(6.5);
+  doc.setTextColor(mutedOnDark[0], mutedOnDark[1], mutedOnDark[2]);
+  doc.text(dict['pdf.issuedAt'], margin, infoLabelY);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(15);
-  doc.text(dateBig, 32, 49);
+  doc.text(dateBig, margin, infoValueY);
+  const dateWidth = doc.getTextWidth(dateBig);
 
   doc.setFont('courier', 'normal');
-  doc.setFontSize(9);
+  doc.setFontSize(8.5);
   doc.setTextColor(primaryLightColor[0], primaryLightColor[1], primaryLightColor[2]);
-  doc.text(timeLine, 32, 55);
+  doc.text(timeLine, margin + dateWidth + 3, infoValueY);
 
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
+  doc.setFontSize(6.5);
   doc.setTextColor(mutedOnDark[0], mutedOnDark[1], mutedOnDark[2]);
-  doc.text(dict['pdf.total'], 32, 65);
+  doc.text(dict['pdf.total'], pageWidth - margin, infoLabelY, { align: 'right' });
 
-  doc.setFontSize(30);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
   doc.setTextColor(255, 255, 255);
-  doc.text(formatCurrency(totalPrice, lang), 32, 77);
+  doc.text(formatCurrency(totalPrice, lang), pageWidth - margin, infoValueY, { align: 'right' });
 
-  // ---- List section ----
-  currentY = headerHeight + 14;
+  currentY = headerHeight + 12;
 
   doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.setLineWidth(1);
@@ -189,6 +220,9 @@ export const generateShoppingListPDF = async (
   const rowHeight = 20;
   const priceColX = pageWidth - margin - 40;
   const subtotalColX = pageWidth - margin;
+  const iconColX = margin + 13;
+  const iconColSize = 9;
+  const contentX = iconColX + iconColSize + 4;
 
   products.forEach((product, index) => {
     ensureSpace(rowHeight + 5);
@@ -201,6 +235,14 @@ export const generateShoppingListPDF = async (
     doc.setFontSize(8);
     doc.text(pad2(index + 1), margin + 4.5, badgeY + 6, { align: 'center' });
 
+    const productEmoji = product.imageUrl ? null : findEmojiForProduct(product.name);
+    if (productEmoji) {
+      const emojiImage = renderEmojiToPNG(productEmoji);
+      if (emojiImage) {
+        doc.addImage(emojiImage, 'PNG', iconColX, badgeY, iconColSize, iconColSize);
+      }
+    }
+
     const fallbackName = product.imageUrl ? dict['product.photoOnly'] : dict['pdf.noName'];
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(6.5);
@@ -208,9 +250,9 @@ export const generateShoppingListPDF = async (
     doc.setTextColor(darkText[0], darkText[1], darkText[2]);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    const maxNameWidth = priceColX - priceLabelWidth - (margin + 13) - 6;
+    const maxNameWidth = priceColX - priceLabelWidth - contentX - 6;
     const displayName = truncateToWidth(doc, product.name || fallbackName, maxNameWidth);
-    doc.text(displayName, margin + 13, currentY + 4.5);
+    doc.text(displayName, contentX, currentY + 4.5);
 
     const unitLabel = product.unit === 'un' ? dict['product.unit'] : product.unit;
     const quantityStr = lang === 'pt'
@@ -219,12 +261,12 @@ export const generateShoppingListPDF = async (
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(6.5);
     doc.setTextColor(mutedGray[0], mutedGray[1], mutedGray[2]);
-    doc.text(dict['sheet.quantityLabel'], margin + 13, currentY + 11);
+    doc.text(dict['sheet.quantityLabel'], contentX, currentY + 11);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(darkText[0], darkText[1], darkText[2]);
     const unitSuffix = product.unit === 'un' ? `${unitLabel}.` : unitLabel;
-    doc.text(`${quantityStr} ${unitSuffix}`, margin + 35, currentY + 11);
+    doc.text(`${quantityStr} ${unitSuffix}`, contentX + 22, currentY + 11);
 
     const roundedItemTotal = calculateItemTotal(product.price, product.quantity, product.unit);
 
@@ -249,19 +291,16 @@ export const generateShoppingListPDF = async (
       doc.setDrawColor(borderGray[0], borderGray[1], borderGray[2]);
       doc.setLineWidth(0.4);
       doc.setLineDashPattern([2, 2], 0);
-      doc.line(margin + 13, currentY + rowHeight - 3, pageWidth - margin, currentY + rowHeight - 3);
+      doc.line(contentX, currentY + rowHeight - 3, pageWidth - margin, currentY + rowHeight - 3);
       doc.setLineDashPattern([], 0);
     }
 
     currentY += rowHeight;
   });
 
-  // Keep the average card, grand total box and footer together so the
-  // footer never gets orphaned alone on a new page.
   ensureSpace(8 + 24 + 8 + 18 + 14 + 20);
   currentY += 8;
 
-  // ---- Average card ----
   const avgCardHeight = 24;
   doc.setDrawColor(borderGray[0], borderGray[1], borderGray[2]);
   doc.setLineWidth(0.4);
@@ -291,7 +330,6 @@ export const generateShoppingListPDF = async (
 
   currentY += avgCardHeight + 8;
 
-  // ---- Grand total box ----
   const totalBoxHeight = 18;
   doc.setFillColor(darkBoxColor[0], darkBoxColor[1], darkBoxColor[2]);
   doc.roundedRect(margin, currentY, pageWidth - margin * 2, totalBoxHeight, 3, 3, 'F');
@@ -305,7 +343,6 @@ export const generateShoppingListPDF = async (
 
   currentY += totalBoxHeight + 14;
 
-  // ---- Footer ----
   doc.setDrawColor(borderGray[0], borderGray[1], borderGray[2]);
   doc.setLineWidth(0.3);
   doc.line(margin, currentY, pageWidth - margin, currentY);

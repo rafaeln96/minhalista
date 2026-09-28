@@ -8,6 +8,8 @@ Progressive Web App para montar e acompanhar sua lista de compras de mercado em 
 - Preço e quantidade por unidade, quilo, grama, litro ou mililitro.
 - Cálculo automático do total do carrinho, com arredondamento monetário consistente.
 - Busca por nome ou preço dentro da lista.
+- Ícone (emoji) ilustrativo automático para produtos cadastrados sem foto, a partir do nome digitado.
+- Sugestão de correção quando o nome digitado tem um pequeno erro de digitação (ex.: "arros" → "Arroz").
 - Exportação da lista em PDF, pronta para levar ao mercado.
 - Instalável como app (PWA), com uso offline após o primeiro carregamento.
 - Interface em português e inglês.

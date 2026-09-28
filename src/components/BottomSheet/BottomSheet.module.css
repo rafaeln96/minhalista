@@ -168,6 +168,23 @@
   border-color: var(--color-primary);
 }
 
+.nameSuggestion {
+  align-self: flex-start;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.nameSuggestion:hover {
+  color: var(--color-primary-light);
+}
+
 .priceInputWrapper {
   display: flex;
   align-items: center;

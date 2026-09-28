@@ -3,6 +3,7 @@ import styles from './ProductCard.module.css';
 import { type Product, useCart } from '../../contexts/CartContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { calculateItemTotal, formatCurrency, getQuantityStep, roundQuantity } from '../../utils/format';
+import { findEmojiForProduct } from '../../utils/productCatalog';
 
 interface ProductCardProps {
   product: Product;
@@ -40,6 +41,7 @@ export function ProductCard({ product, onEdit, onRemove }: ProductCardProps) {
     : product.quantity.toString();
 
   const displayName = product.name || (product.imageUrl ? t('product.photoOnly') : t('product.defaultName'));
+  const suggestedEmoji = product.imageUrl ? null : findEmojiForProduct(product.name);
 
   return (
     <>
@@ -50,6 +52,10 @@ export function ProductCard({ product, onEdit, onRemove }: ProductCardProps) {
         >
           {product.imageUrl ? (
             <img src={product.imageUrl} alt={displayName} className={styles.image} />
+          ) : suggestedEmoji ? (
+            <div className={styles.imagePlaceholder}>
+              <span className={styles.placeholderEmoji}>{suggestedEmoji}</span>
+            </div>
           ) : (
             <div className={styles.imagePlaceholder}>
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={styles.placeholderIcon}>
@@ -101,17 +107,14 @@ export function ProductCard({ product, onEdit, onRemove }: ProductCardProps) {
       </div>
 
       {isExpanded && product.imageUrl && (
-        <div className={styles.imageOverlay} onClick={() => setIsExpanded(false)}>
+        <div className={styles.imageOverlay}>
           <div className={styles.expandedImageWrapper}>
             <img src={product.imageUrl} alt={displayName} className={styles.expandedImage} />
             <button
               type="button"
               className={styles.closeExpandedBtn}
               aria-label={t('product.closeImage')}
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsExpanded(false);
-              }}
+              onClick={() => setIsExpanded(false)}
             >
               ×
             </button>

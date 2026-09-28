@@ -52,6 +52,11 @@
   opacity: 0.5;
 }
 
+.placeholderEmoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
 .content {
   flex: 1;
   display: flex;
