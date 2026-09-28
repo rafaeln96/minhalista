@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, type ReactNode, useEffect } from 'react';
+import { useLanguage } from './LanguageContext';
+import { roundMoney } from '../utils/format';
 
 export interface Product {
   id: string;
@@ -19,11 +21,15 @@ interface CartContextData {
   totalProducts: number;
   totalUnits: number;
   totalPrice: number;
+  storageError: string | null;
+  clearStorageError: () => void;
 }
 
 const CartContext = createContext<CartContextData>({} as CartContextData);
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { t } = useLanguage();
+  const [storageError, setStorageError] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>(() => {
     const stored = localStorage.getItem('@MinhaLista:products');
     if (stored) {
@@ -42,8 +48,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('@MinhaLista:products', JSON.stringify(products));
     } catch (e) {
       console.error('Erro ao salvar no localStorage (possível limite excedido)', e);
+      setStorageError(t('error.storageFailed'));
     }
-  }, [products]);
+  }, [products, t]);
+
+  const clearStorageError = () => setStorageError(null);
 
   const addProduct = (product: Omit<Product, 'id'>) => {
     const newProduct = {
@@ -54,7 +63,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const updateProduct = (id: string, updates: Partial<Product>) => {
-    setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
+    setProducts(prev => prev.map(p => {
+      if (p.id !== id) return p;
+      const safeUpdates = { ...updates };
+      if (typeof safeUpdates.price === 'number' && (Number.isNaN(safeUpdates.price) || safeUpdates.price < 0)) {
+        delete safeUpdates.price;
+      }
+      if (typeof safeUpdates.quantity === 'number' && (Number.isNaN(safeUpdates.quantity) || safeUpdates.quantity < 0)) {
+        delete safeUpdates.quantity;
+      }
+      return { ...p, ...safeUpdates };
+    }));
   };
 
   const removeProduct = (id: string) => {
@@ -62,7 +81,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const updateQuantity = (id: string, quantity: number) => {
-    if (quantity < 0) return;
+    if (Number.isNaN(quantity) || quantity < 0) return;
     setProducts((state) =>
       state.map((p) => (p.id === id ? { ...p, quantity } : p))
     );
@@ -74,17 +93,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const totalProducts = products.length;
 
-  // Calcula o total de itens. Se for 'un', soma a quantidade. Se for peso/volume (kg, g, etc), conta como 1 item físico.
   const totalUnits = parseFloat(products.reduce((acc, p) => {
     return acc + (p.unit === 'un' ? p.quantity : 1);
   }, 0).toFixed(3));
 
   const totalPrice = products.reduce((acc, p) => {
-    // Apenas multiplica se for unidade. Se for medida de peso/volume, o preço digitado é o preço final do pacote/etiqueta.
     const isUnitMultiplier = p.unit === 'un';
     const itemTotal = isUnitMultiplier ? p.price * p.quantity : p.price;
-    const roundedItemTotal = Number(Math.round(Number(itemTotal + 'e2')) + 'e-2');
-    return acc + roundedItemTotal;
+    return acc + roundMoney(itemTotal);
   }, 0);
 
   return (
@@ -99,6 +115,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         totalProducts,
         totalUnits,
         totalPrice,
+        storageError,
+        clearStorageError,
       }}
     >
       {children}

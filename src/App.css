@@ -16,7 +16,6 @@
   z-index: 50;
   background-color: var(--color-background);
   padding-bottom: 8px;
-  /* Corrige o gap de 1px (linha fina) que aparece em alguns browsers mobile durante o scroll */
   box-shadow: 0 1px 0 var(--color-background);
 }
 

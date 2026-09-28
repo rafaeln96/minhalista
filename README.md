@@ -1,81 +1,64 @@
-# Minha Lista de Compras (Mercado) 🛒
+# Minha Lista de Mercado
 
-Um aplicativo Web progressivo e moderno para gerenciamento de listas de compras de supermercado, projetado com foco em usabilidade mobile-first, alta velocidade, internacionalização e operações matemáticas robustas.
+Progressive Web App para montar e acompanhar sua lista de compras de mercado em tempo real, com cálculo automático de total, geração de PDF e suporte a português e inglês.
 
-## 🌟 Funcionalidades Principais
+## Funcionalidades
 
-- **Adição Rápida de Produtos**: Interface intuitiva via Bottom Sheet para adicionar produtos rapidamente, com suporte para nome ou foto (câmera nativa no celular).
-- **Suporte Multilíngue (i18n Bilíngue)**: Alternância em tempo real entre **Português (PT)** e **Inglês (EN)** com detecção de idioma e salvamento de preferência no `localStorage`.
-- **Gerenciamento Inteligente de Quantidades**: 
-  - Cálculo independente para itens por Unidade (multiplica pelo valor) e itens por Peso/Volume (como kg ou gramas, onde o preço inserido já é o total).
-  - Suporte total a frações (ex: `1,5 kg`) mantendo um estado numérico exato na interface.
-- **Prevenção de Falhas de Flutuação (Float-point)**: Toda a matemática é executada com tratamentos precisos de arredondamento (`Number(Math.round(val + 'e2')) + 'e-2'`), eliminando problemas clássicos de soma com centavos no JavaScript.
-- **Exportação Nativa para PDF Bilíngue**: Geração local e instantânea de relatórios no formato PDF utilizando a biblioteca `jsPDF` e `jspdf-autotable`. O PDF é gerado automaticamente no idioma selecionado pelo usuário (Português ou Inglês). Carregamento otimizado via **Importação Dinâmica (Code-Splitting)**, mantendo o bundle inicial leve (~215 KB).
-- **Design Responsivo & Assimétrico**: Cabeçalho reestruturado para ser elegante em qualquer tela. Em celulares, as ações de alternância de idioma, gerar PDF e limpar lista são agrupadas assimetricamente em coluna à direita, preservando o conforto visual e evitando qualquer sobreposição ou corte.
-- **Busca em Tempo Real**: Componente dedicado de pesquisa instantânea no carrinho (mesmo para itens adicionados apenas por imagem) com suporte a buscas bilíngues ("foto", "photo", "imagem", "picture").
-- **PWA Completo & Engenharia Avançada para iOS Safari**: Instalação direta ("Adicionar à Tela de Início"). Resolvidos bugs nativos do motor WebKit (Safari), utilizando alturas dinâmicas modernas (`min-height: 100dvh`) para evitar rolagem falsa. Transições CSS (`cubic-bezier`) acopladas ao invés de forçar recriações no DOM erradicam os *scroll jumps*. Além disso, uma **Splash Screen nativa em CSS puro** injetada no `index.html` mascara completamente o tempo de parseamento do JavaScript em celulares mais antigos, resolvendo a terrível "tela escura" (Blank Screen) no lançamento do PWA.
-- **Resiliência de Dados & Tratamento Anti-Crash**: Bloco `try / catch` implementado na hidratação do `localStorage` para evitar Tela Branca da Morte caso o cache do navegador fique corrompido, garantindo que o app abra vazio de forma íntegra.
-- **Parse Seguro e Preciso (Sem quebra de Centavos no i18n)**: Tratamento profundo de *locale-aware parsing* onde preços e quantidades não são mais analisados pelo texto de exibição, mas mantidos puramente no estado matemático (`priceValue`), prevenindo corrupção de valores altos (multiplicações acidentais por 100) quando utilizados sob o idioma Inglês (onde a vírgula significa milhar).
-- **Sem Dependência de Backend**: Toda a persistência é mantida no cliente ou exportada diretamente. Tudo roda localmente no navegador!
+- Cadastro de produtos por nome e/ou foto (tirada na hora ou da galeria).
+- Preço e quantidade por unidade, quilo, grama, litro ou mililitro.
+- Cálculo automático do total do carrinho, com arredondamento monetário consistente.
+- Busca por nome ou preço dentro da lista.
+- Exportação da lista em PDF, pronta para levar ao mercado.
+- Instalável como app (PWA), com uso offline após o primeiro carregamento.
+- Interface em português e inglês.
 
-## 🛠️ Tecnologias e Arquitetura
+## Stack técnica
 
-- **Frontend Framework**: React 19 + TypeScript (para tipagem estática rigorosa).
-- **Build Tool**: Vite (Extremamente rápido com Hot Module Replacement).
-- **Internacionalização (i18n)**: Sistema customizado via `LanguageContext` + `translations.ts` com suporte a dicionários dinâmicos e substituição de parâmetros (`{{count}}`, `{{name}}`).
-- **PWA & Cache Offline**: `vite-plugin-pwa` + Workbox com estratégias de `runtimeCaching` para fontes do Google e assets estáticos.
-- **Gerenciamento de Estado**: Context API Nativa (`CartContext.tsx` e `LanguageContext.tsx`).
-- **Estilização & Componentização**: Componentes 100% isolados com CSS Modules Puros e escopados, mantendo o `App.css` focado apenas em layout global e variáveis de design system.
-- **Geração de PDF (Code-Splitting)**: `jspdf` e `jspdf-autotable` carregados dinamicamente via `import(...)` sob demanda.
+- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vite.dev/) como build tool e dev server
+- [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) para o suporte a PWA (manifest, service worker, cache offline)
+- [jsPDF](https://github.com/parallax/jsPDF) + [jspdf-autotable](https://github.com/simonbengtsson/jsPDF-AutoTable) para a exportação em PDF
+- [oxlint](https://oxc.rs/docs/guide/usage/linter.html) como linter
+- Persistência local via `localStorage` (sem backend/servidor)
 
-## 🗂️ Estrutura de Pastas
+## Como rodar o projeto
 
-```text
-src/
-├── components/           # Componentes UI Reutilizáveis & Modulares
-│   ├── BottomSheet/      # Modal de inserção/edição de produtos deslizando de baixo
-│   ├── ConfirmModal/     # Modal reutilizável de confirmação (exclusão de item / limpar lista)
-│   ├── EmptyState/       # Estado visual estilizado para carrinho vazio
-│   ├── FAB/              # Botão flutuante estilizado de ação principal
-│   ├── Header/           # Cabeçalho com totais, ações e seletor de idioma
-│   ├── LanguageSelector/ # Seletor de idioma bilíngue (PT / EN)
-│   ├── ProductCard/      # Cartão individual do produto (nome, img, preço, qtd)
-│   ├── ProductList/      # Grid/Lista de produtos filtrados e busca sem resultados
-│   └── SearchBar/        # Barra de pesquisa com botão de limpar
-├── contexts/             # Gerenciadores de estado globais
-│   ├── CartContext.tsx   # Lógica central do carrinho (Totais, add, edit, remove)
-│   └── LanguageContext.tsx # Gerenciador de idioma bilíngue (PT/EN) e t() helper
-├── i18n/                 # Dicionários de tradução
-│   └── translations.ts   # Chaves e textos em Português e Inglês
-├── utils/                # Utilitários puros
-│   ├── format.ts         # Formatação de moeda BRL / USD por locale
-│   └── pdfGenerator.ts   # Gerador de PDF nativo bilíngue
-├── App.tsx               # Componente Root desacoplado e limpo
-├── App.css               # Variáveis globais e layout container
-└── main.tsx              # Ponto de entrada do React com Service Worker
-```
+Pré-requisitos: [Node.js](https://nodejs.org/) 18 ou superior.
 
-## 🚀 Como Rodar o Projeto (Desenvolvimento)
-
-1. Certifique-se de ter o [Node.js](https://nodejs.org/) instalado.
-2. Navegue até o diretório do projeto e instale as dependências:
-   ```bash
-   npm install
-   ```
-3. Inicie o servidor de desenvolvimento do Vite:
-   ```bash
-   npm run dev
-   ```
-4. O app ficará disponível em `http://localhost:5173`.
-
-## 📦 Como Construir para Produção
-
-Execute o comando de build:
 ```bash
-npm run build
+npm install
+npm run dev
 ```
-Os arquivos otimizados serão gerados dentro da pasta `dist/`, prontos para serem hospedados de forma estática (Vercel, Netlify, GitHub Pages, etc).
 
-## 📄 Notas Futuras / Roadmap
+O app abre em `http://localhost:5173` por padrão.
 
-- Conectar a um backend (Supabase ou Firebase) para login se necessário.
+### Scripts disponíveis
+
+| Script            | Descrição                                              |
+| ----------------- | ------------------------------------------------------- |
+| `npm run dev`     | Sobe o servidor de desenvolvimento com hot reload.       |
+| `npm run build`   | Checa os tipos (`tsc -b`) e gera o build de produção.    |
+| `npm run preview` | Serve localmente o build de produção gerado.             |
+| `npm run lint`    | Roda o linter (`oxlint`) sobre o projeto.                |
+
+## Estrutura de pastas
+
+```
+src/
+├── assets/          Imagens estáticas usadas na UI
+├── components/      Componentes de UI, cada um com seu .tsx e .module.css
+├── contexts/        Estado global via React Context (carrinho e idioma)
+├── i18n/            Dicionário de traduções (pt/en)
+├── utils/           Funções puras reutilizáveis (formatação, geração de PDF)
+├── App.tsx          Composição da tela principal
+└── main.tsx         Ponto de entrada da aplicação
+```
+
+Documentação complementar em [`docs/`](docs/):
+
+- [`docs/regras-de-negocio.md`](docs/regras-de-negocio.md) — decisões de cálculo e comportamento (preço por unidade vs. por medida, arredondamento monetário, parsing de quantidade, etc.).
+- [`docs/ajustes-de-interface.md`](docs/ajustes-de-interface.md) — ajustes de CSS que resolvem comportamentos específicos de navegador.
+
+## Dados do usuário
+
+A lista de produtos é salva localmente no navegador (`localStorage`), por dispositivo — não há sincronização entre dispositivos nem conta de usuário. Limpar os dados do navegador ou desinstalar o PWA apaga a lista salva.

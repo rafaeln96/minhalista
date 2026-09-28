@@ -5,12 +5,12 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  pointer-events: none; /* Allows clicking through the container */
+  pointer-events: none;
   z-index: 10;
 }
 
 .fabBtn {
-  pointer-events: auto; /* Re-enable clicks on the button */
+  pointer-events: auto;
   background-color: var(--color-primary);
   color: var(--color-text-white);
   border-radius: var(--radius-xl);

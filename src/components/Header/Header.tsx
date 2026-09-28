@@ -6,12 +6,23 @@ import { formatCurrencyPart } from '../../utils/format';
 import { generateShoppingListPDF } from '../../utils/pdfGenerator';
 import { LanguageSelector } from '../LanguageSelector/LanguageSelector';
 import { ConfirmModal } from '../ConfirmModal/ConfirmModal';
+import { Toast } from '../Toast/Toast';
 
 export function Header() {
   const { products, totalProducts, totalUnits, totalPrice, clearList } = useCart();
   const { language, t } = useLanguage();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
   const { symbol, value } = formatCurrencyPart(totalPrice, language);
+
+  const handleGeneratePdf = async () => {
+    try {
+      await generateShoppingListPDF(products, totalUnits, totalPrice, language);
+    } catch (error) {
+      console.error('Erro ao gerar PDF', error);
+      setPdfError(t('error.pdfFailed'));
+    }
+  };
 
   const productCountText = totalProducts === 1
     ? t('header.productCount_one', { count: totalProducts })
@@ -43,8 +54,8 @@ export function Header() {
           <div className={styles.actionButtons}>
             <button 
               type="button"
-              className={styles.exportBtn} 
-              onClick={() => generateShoppingListPDF(products, totalUnits, totalPrice, language)}
+              className={styles.exportBtn}
+              onClick={handleGeneratePdf}
               disabled={products.length === 0}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -92,6 +103,8 @@ export function Header() {
           setShowClearConfirm(false);
         }}
       />
+
+      <Toast message={pdfError} onDismiss={() => setPdfError(null)} />
     </header>
   );
 }

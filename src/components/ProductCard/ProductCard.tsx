@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styles from './ProductCard.module.css';
 import { type Product, useCart } from '../../contexts/CartContext';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { formatCurrency } from '../../utils/format';
+import { formatCurrency, getQuantityStep, roundMoney, roundQuantity } from '../../utils/format';
 
 interface ProductCardProps {
   product: Product;
@@ -15,25 +15,25 @@ export function ProductCard({ product, onEdit, onRemove }: ProductCardProps) {
   const { language, t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const step = getQuantityStep(product.unit);
+
   const handleDecrease = () => {
-    if (product.quantity > 1) {
-      const newNum = Math.ceil(product.quantity) - 1;
-      updateQuantity(product.id, Math.max(1, newNum));
-    } else {
+    const newNum = roundQuantity(product.quantity - step, step);
+    if (newNum <= 0) {
       onRemove();
+    } else {
+      updateQuantity(product.id, newNum);
     }
   };
 
   const handleIncrease = () => {
-    const newNum = Math.floor(product.quantity) + 1;
+    const newNum = roundQuantity(product.quantity + step, step);
     updateQuantity(product.id, newNum);
   };
 
   const isUnitMultiplier = product.unit === 'un';
-  
-  // Arredonda usando o mesmo método do carrinho para evitar divergência de centavos
   const itemTotal = isUnitMultiplier ? product.quantity * product.price : product.price;
-  const totalPrice = Number(Math.round(Number(itemTotal + 'e2')) + 'e-2');
+  const totalPrice = roundMoney(itemTotal);
 
   const unitLabel = product.unit === 'un' ? t('product.unit') : product.unit;
 
@@ -107,7 +107,17 @@ export function ProductCard({ product, onEdit, onRemove }: ProductCardProps) {
         <div className={styles.imageOverlay} onClick={() => setIsExpanded(false)}>
           <div className={styles.expandedImageWrapper}>
             <img src={product.imageUrl} alt={displayName} className={styles.expandedImage} />
-            <button type="button" className={styles.closeExpandedBtn} aria-label={t('product.closeImage')}>×</button>
+            <button
+              type="button"
+              className={styles.closeExpandedBtn}
+              aria-label={t('product.closeImage')}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsExpanded(false);
+              }}
+            >
+              ×
+            </button>
           </div>
         </div>
       )}

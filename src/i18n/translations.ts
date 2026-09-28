@@ -2,7 +2,6 @@ export type Language = 'pt' | 'en';
 
 export const translations = {
   pt: {
-    // Header
     'header.logo': 'Mercado',
     'header.subtitle': 'LISTA DE COMPRAS',
     'header.generatePdf': 'Gerar PDF',
@@ -13,17 +12,14 @@ export const translations = {
     'header.itemCount_one': '{{count}} item',
     'header.itemCount_other': '{{count}} itens',
 
-    // Search Bar
     'search.placeholder': 'Buscar produtos...',
     'search.clear': 'Limpar busca',
     'search.emptyResult': 'Nenhum produto encontrado para "{{query}}"',
 
-    // Empty State
     'empty.title': 'Carrinho vazio',
     'empty.subtitle': 'Adicione produtos conforme você vai colocando no carrinho.',
     'empty.button': 'Tirar foto ou digitar nome',
 
-    // Product Card
     'product.defaultName': 'Produto',
     'product.photoOnly': 'Sem nome',
     'product.unit': 'un',
@@ -35,7 +31,6 @@ export const translations = {
     'product.deleteLabel': 'Remover produto',
     'product.closeImage': 'Fechar foto',
 
-    // Bottom Sheet (Add/Edit)
     'sheet.titleNew': 'Novo produto',
     'sheet.titleEdit': 'Editar produto',
     'sheet.subtitle': 'Tire uma foto ou escreva o nome',
@@ -47,9 +42,8 @@ export const translations = {
     'sheet.unitLabel': 'MEDIDA',
     'sheet.submitNew': '+ Adicionar ao carrinho',
     'sheet.submitEdit': 'Salvar alterações',
-    'sheet.footerHint': 'Toque fora para fechar · adicione vários em sequência',
+    'sheet.footerHint': 'Toque fora para fechar',
 
-    // Confirm Modals
     'confirmDelete.title': 'Remover item?',
     'confirmDelete.message': 'Tem certeza que deseja remover {{name}} da sua lista?',
     'confirmDelete.cancel': 'Cancelar',
@@ -60,12 +54,10 @@ export const translations = {
     'confirmClear.cancel': 'Cancelar',
     'confirmClear.confirm': 'Esvaziar',
 
-    // Language Selector
     'lang.pt': 'PT',
     'lang.en': 'EN',
     'lang.switch': 'Mudar para Inglês',
 
-    // PDF Generator
     'pdf.title': 'Mercado',
     'pdf.subtitle': 'LISTA DE COMPRAS',
     'pdf.issuedAt': 'EMITIDO EM',
@@ -80,10 +72,12 @@ export const translations = {
     'pdf.thSubtotal': 'SUBTOTAL',
     'pdf.averageTicket': 'Ticket médio por produto',
     'pdf.grandTotal': 'Total geral',
-    'pdf.noName': 'Sem nome'
+    'pdf.noName': 'Sem nome',
+
+    'error.storageFailed': 'Não foi possível salvar sua lista neste dispositivo (armazenamento cheio ou indisponível). Suas alterações podem ser perdidas ao fechar o app.',
+    'error.pdfFailed': 'Não foi possível gerar o PDF. Tente novamente.'
   },
   en: {
-    // Header
     'header.logo': 'Market',
     'header.subtitle': 'SHOPPING LIST',
     'header.generatePdf': 'Export PDF',
@@ -94,17 +88,14 @@ export const translations = {
     'header.itemCount_one': '{{count}} item',
     'header.itemCount_other': '{{count}} items',
 
-    // Search Bar
     'search.placeholder': 'Search products...',
     'search.clear': 'Clear search',
     'search.emptyResult': 'No products found for "{{query}}"',
 
-    // Empty State
     'empty.title': 'Empty Cart',
     'empty.subtitle': 'Add products as you put them in your shopping cart.',
     'empty.button': 'Take photo or type name',
 
-    // Product Card
     'product.defaultName': 'Product',
     'product.photoOnly': 'No name',
     'product.unit': 'pc',
@@ -116,7 +107,6 @@ export const translations = {
     'product.deleteLabel': 'Delete product',
     'product.closeImage': 'Close image',
 
-    // Bottom Sheet (Add/Edit)
     'sheet.titleNew': 'New product',
     'sheet.titleEdit': 'Edit product',
     'sheet.subtitle': 'Take a photo or type the product name',
@@ -128,9 +118,8 @@ export const translations = {
     'sheet.unitLabel': 'UNIT',
     'sheet.submitNew': '+ Add to cart',
     'sheet.submitEdit': 'Save changes',
-    'sheet.footerHint': 'Tap outside to close · add multiple items in sequence',
+    'sheet.footerHint': 'Tap outside to close',
 
-    // Confirm Modals
     'confirmDelete.title': 'Remove item?',
     'confirmDelete.message': 'Are you sure you want to remove {{name}} from your list?',
     'confirmDelete.cancel': 'Cancel',
@@ -141,12 +130,10 @@ export const translations = {
     'confirmClear.cancel': 'Cancel',
     'confirmClear.confirm': 'Empty cart',
 
-    // Language Selector
     'lang.pt': 'PT',
     'lang.en': 'EN',
     'lang.switch': 'Switch to Portuguese',
 
-    // PDF Generator
     'pdf.title': 'Market',
     'pdf.subtitle': 'SHOPPING LIST',
     'pdf.issuedAt': 'ISSUED ON',
@@ -161,6 +148,9 @@ export const translations = {
     'pdf.thSubtotal': 'SUBTOTAL',
     'pdf.averageTicket': 'Average price per product',
     'pdf.grandTotal': 'Grand total',
-    'pdf.noName': 'No name'
+    'pdf.noName': 'No name',
+
+    'error.storageFailed': 'Could not save your list on this device (storage full or unavailable). Your changes may be lost when you close the app.',
+    'error.pdfFailed': 'Could not generate the PDF. Please try again.'
   }
 };

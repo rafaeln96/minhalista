@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './BottomSheet.module.css';
-import { useCart } from '../../contexts/CartContext';
+import { type Product, useCart } from '../../contexts/CartContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { getQuantityStep, roundQuantity } from '../../utils/format';
 
 interface BottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  editingProduct?: any;
+  editingProduct?: Product | null;
 }
 
 export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProps) {
@@ -28,13 +29,13 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
         const locale = language === 'pt' ? 'pt-BR' : 'en-US';
         setPriceValue(editingProduct.price);
         setPriceStr(editingProduct.price.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-        
+
         if (Number.isInteger(editingProduct.quantity)) {
           setQuantityStr(editingProduct.quantity.toString());
         } else {
           setQuantityStr(editingProduct.quantity.toLocaleString(locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
         }
-        
+
         setUnit(editingProduct.unit || 'un');
         setImageUrl(editingProduct.imageUrl);
       } else {
@@ -102,9 +103,17 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
 
   const parseQuantity = (str: string) => {
     if (language === 'pt') {
-      return parseFloat(str.replace(/\./g, '').replace(',', '.')) || 0;
+      const normalized = str.replace(/\./g, '').replace(',', '.').replace(/,/g, '');
+      return parseFloat(normalized) || 0;
     }
     return parseFloat(str.replace(/,/g, '')) || 0;
+  };
+
+  const formatQuantityForInput = (value: number) => {
+    const locale = language === 'pt' ? 'pt-BR' : 'en-US';
+    return Number.isInteger(value)
+      ? value.toString()
+      : value.toLocaleString(locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 });
   };
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,25 +123,27 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
 
   const handleDecreaseQuantity = () => {
     const num = parseQuantity(quantityStr);
-    const newNum = Math.ceil(num) - 1;
-    if (num > 1) {
-      setQuantityStr(Math.max(1, newNum).toString());
+    const step = getQuantityStep(unit);
+    const newNum = roundQuantity(num - step, step);
+    if (newNum > 0) {
+      setQuantityStr(formatQuantityForInput(newNum));
     }
   };
 
   const handleIncreaseQuantity = () => {
     const num = parseQuantity(quantityStr);
-    const newNum = Math.floor(num) + 1;
-    setQuantityStr(newNum.toString());
+    const step = getQuantityStep(unit);
+    const newNum = roundQuantity(num + step, step);
+    setQuantityStr(formatQuantityForInput(newNum));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if ((!name && !imageUrl) || !priceStr || !quantityStr) return;
+    const quantity = parseQuantity(quantityStr);
+    if ((!name && !imageUrl) || priceValue <= 0 || quantity <= 0) return;
 
     const price = priceValue;
-    const quantity = parseQuantity(quantityStr);
-    
+
     if (editingProduct) {
       updateProduct(editingProduct.id, {
         name,
@@ -271,15 +282,15 @@ export function BottomSheet({ isOpen, onClose, editingProduct }: BottomSheetProp
                 onChange={(e) => setUnit(e.target.value)}
               >
                 <option value="un">{t('product.unit')}</option>
-                <option value="kg">kg</option>
-                <option value="g">g</option>
-                <option value="L">L</option>
-                <option value="ml">ml</option>
+                <option value="kg">{t('product.kg')}</option>
+                <option value="g">{t('product.g')}</option>
+                <option value="L">{t('product.l')}</option>
+                <option value="ml">{t('product.ml')}</option>
               </select>
             </div>
           </div>
 
-          <button type="submit" className={styles.submitBtn} disabled={(!name && !imageUrl) || !priceStr || !quantityStr}>
+          <button type="submit" className={styles.submitBtn} disabled={(!name && !imageUrl) || priceValue <= 0 || parseQuantity(quantityStr) <= 0}>
             {editingProduct ? t('sheet.submitEdit') : t('sheet.submitNew')}
           </button>
           

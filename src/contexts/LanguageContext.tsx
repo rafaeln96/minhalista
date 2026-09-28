@@ -17,7 +17,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (stored === 'pt' || stored === 'en') {
       return stored;
     }
-    // Detector de idioma do sistema do usuário (fallback seguro)
     const navLang = navigator.language?.toLowerCase() || '';
     return navLang.startsWith('pt') ? 'pt' : 'en';
   });

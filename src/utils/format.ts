@@ -24,3 +24,16 @@ export const formatCurrencyPart = (value: number, lang: Language = 'pt') => {
 
   return { symbol, value: `${integer}${decimal}${fraction}` };
 };
+
+export const roundMoney = (value: number): number => {
+  return Number(Math.round(Number(value + 'e2')) + 'e-2');
+};
+
+export const getQuantityStep = (unit: string): number => {
+  return unit === 'un' || unit === 'g' || unit === 'ml' ? 1 : 0.1;
+};
+
+export const roundQuantity = (value: number, step: number): number => {
+  const decimals = step < 1 ? 1 : 0;
+  return Number(value.toFixed(decimals));
+};

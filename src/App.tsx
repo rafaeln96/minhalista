@@ -8,9 +8,10 @@ import { ProductList } from './components/ProductList/ProductList';
 import { FAB } from './components/FAB/FAB';
 import { BottomSheet } from './components/BottomSheet/BottomSheet';
 import { ConfirmModal } from './components/ConfirmModal/ConfirmModal';
+import { Toast } from './components/Toast/Toast';
 
 function AppContent() {
-  const { products, removeProduct } = useCart();
+  const { products, removeProduct, storageError, clearStorageError } = useCart();
   const { language, t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -97,6 +98,8 @@ function AppContent() {
         onCancel={() => setProductToDelete(null)}
         onConfirm={confirmDelete}
       />
+
+      <Toast message={storageError} onDismiss={clearStorageError} />
     </div>
   );
 }
